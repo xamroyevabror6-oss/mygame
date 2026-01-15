@@ -3,14 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🎮 Sonni top o‘yini</title>
+<title>🎮 Cheksiz Variantli O‘yin</title>
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
     body {
         font-family: 'Press Start 2P', cursive;
-        margin: 0;
-        padding: 0;
         text-align: center;
         background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
         color: white;
@@ -19,145 +17,146 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
+        margin: 0;
+        padding: 10px;
+        transition: background 0.5s;
     }
 
     h1 {
-        font-size: 28px;
+        font-size: 26px;
         margin-bottom: 20px;
         color: #00ff99;
-        text-shadow: 2px 2px 5px black;
-    }
-
-    p {
-        font-size: 18px;
-    }
-
-    input, button {
-        padding: 15px;
-        margin: 10px;
-        font-size: 18px;
-        border-radius: 12px;
-        border: none;
-        outline: none;
-        width: 80%;
-        max-width: 300px;
-    }
-
-    input {
-        text-align: center;
+        text-shadow: 2px 2px 8px black;
     }
 
     button {
+        padding: 15px;
+        margin: 10px;
+        font-size: 16px;
+        border-radius: 15px;
+        border: none;
+        width: 80%;
+        max-width: 300px;
+        cursor: pointer;
         background: #00ff99;
         color: #111;
         font-weight: bold;
-        cursor: pointer;
-        transition: all 0.2s ease;
+        transition: all 0.3s ease;
     }
 
     button:hover {
         background: #00cc7a;
         transform: scale(1.05);
+        box-shadow: 0 0 15px #00ff99;
     }
 
     #result {
-        margin-top: 15px;
+        margin-top: 20px;
         font-size: 20px;
         font-weight: bold;
+        text-shadow: 1px 1px 5px black;
     }
 
-    #info {
-        margin: 15px 0;
-        font-size: 16px;
-        color: #ffdd00;
-    }
-
-</style>
-<style>
-    /* Ism-familiya uchun */
     #author {
-        position: fixed;      /* Ekranda doimiy turadi */
-        top: 10px;            /* Yuqoridan 10px */
-        right: 10px;          /* O‘ngdan 10px */
-        background: rgba(0,255,153,0.8);  /* Rangli fon, yarim shaffof */
-        color: #111;          /* Matn rangi */
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        background: rgba(0,255,153,0.8);
+        color: #111;
         padding: 10px 15px;
         border-radius: 12px;
         font-weight: bold;
         font-size: 16px;
-        z-index: 9999;        /* Boshqa elementlardan ustun turadi */
+        z-index: 9999;
         box-shadow: 2px 2px 8px black;
     }
 </style>
-button:hover {
-    transform: scale(1.05);
-    transition: all 0.2s ease;
-}
-
 </head>
 <body>
-    <audio id="winSound" src="win.mp3"></audio>
-<audio id="failSound" src="fail.mp3"></audio>
 
 <div id="author">Xamroyev Abror</div>
 
-<h1>🎮 Sonni top o‘yini</h1>
+<h1 id="question">Savol yuklanmoqda...</h1>
 
-<p>Darajani tanlang:</p>
-<button onclick="startGame(10,5)">Easy (1–10)</button>
-<button onclick="startGame(20,3)">Hard (1–20)</button>
-
-<p id="info"></p>
-
-<input type="number" id="guess" placeholder="Son kiriting">
-<button onclick="check()">Tekshirish</button>
+<div id="options"></div>
 
 <p id="result"></p>
 
+<audio id="winSound" src="win.mp3"></audio>
+<audio id="failSound" src="fail.mp3"></audio>
+
 <script>
-let secret, tries, maxTries;
+// Savollar massivi
+const questions = [
+    {
+        q: "O‘zbekiston poytaxti qaysi?",
+        options: ["Samarqand", "Toshkent", "Buxoro"],
+        answer: 1
+    },
+    {
+        q: "Python dasturlash tili qaysi yil yaratilgan?",
+        options: ["1991", "2000", "1985"],
+        answer: 0
+    },
+    {
+        q: "HTML nima uchun ishlatiladi?",
+        options: ["Web sahifa yaratish", "Musika tinglash", "Video o‘ynash"],
+        answer: 0
+    },
+    {
+        q: "JavaScript qayerda ishlaydi?",
+        options: ["Brauzer", "Muzey", "Kompyuter qotib qoladi"],
+        answer: 0
+    },
+    {
+        q: "Yer qaysi sayyoraga tegishli?",
+        options: ["Mars", "Yer", "Jupiter"],
+        answer: 1
+    },
+    // Qo‘shimcha qiyinroq savollarni shu yerga qo‘shish mumkin
+];
 
-function startGame(max, t) {
-    secret = Math.floor(Math.random() * max) + 1;
-    maxTries = t;
-    tries = 0;
-    document.getElementById("info").innerText =
-        `Men 1 dan ${max} gacha son o‘yladim. Urinishlar: ${maxTries}`;
+// Global o‘zgaruvchi
+let currentQuestion;
+
+// Tasodifiy savol tanlash
+function nextQuestion() {
+    currentQuestion = questions[Math.floor(Math.random() * questions.length)];
+    document.getElementById("question").innerText = currentQuestion.q;
+
+    const optionsDiv = document.getElementById("options");
+    optionsDiv.innerHTML = "";
+
+    currentQuestion.options.forEach((opt, index) => {
+        const btn = document.createElement("button");
+        btn.innerText = opt;
+        btn.setAttribute("data-index", index);
+        btn.onclick = checkAnswer;
+        optionsDiv.appendChild(btn);
+    });
+
     document.getElementById("result").innerText = "";
-    document.getElementById("guess").value = "";
+    document.body.style.background = "linear-gradient(135deg, #0f2027, #203a43, #2c5364)";
 }
 
-function check() {
-    let guess = Number(document.getElementById("guess").value);
-    tries++;
-
-    if (!guess) {
-        document.getElementById("result").innerText = "⚠️ Son kiriting!";
-        return;
-    }
-
-    if (guess === secret) {
-        document.getElementById("result").innerHTML = "🎉 🎊 YUTDINGIZ! 🎊 🎉";
+// Javobni tekshirish
+function checkAnswer(e) {
+    const index = Number(e.target.getAttribute("data-index"));
+    if(index === currentQuestion.answer) {
+        document.getElementById("result").innerText = "🎉 To‘g‘ri javob!";
+        document.getElementById("winSound").play();
         document.body.style.background = "linear-gradient(135deg, #11998e, #38ef7d)";
-    } else if (tries >= maxTries) {
-        document.getElementById("result").innerHTML =
-            `😢 YUTQAZDINGIZ. To‘g‘ri son: ${secret}`;
-        document.body.style.background = "linear-gradient(135deg, #f00000, #dc281e)";
     } else {
-        let hint = guess > secret ? "⬇️ Kamroq kiriting!" : "⬆️ Ko‘proq kiriting!";
-        document.getElementById("result").innerText =
-            `❌ Xato. ${hint} Qolgan urinish: ${maxTries - tries}`;
+        document.getElementById("result").innerText = `❌ Xato. To‘g‘ri javob: ${currentQuestion.options[currentQuestion.answer]}`;
+        document.getElementById("failSound").play();
+        document.body.style.background = "linear-gradient(135deg, #f00000, #dc281e)";
     }
+    setTimeout(nextQuestion, 2000); // 2 soniya kutib yangi savol
 }
+
+// O‘yinni boshlash
+nextQuestion();
 </script>
-if (guess === secret) {
-    document.body.style.background = "linear-gradient(135deg, #11998e, #38ef7d)";
-} else if (tries >= maxTries) {
-    document.body.style.background = "linear-gradient(135deg, #f00000, #dc281e)";
-}
-let hint = guess > secret ? "⬇️ Kamroq kiriting!" : "⬆️ Ko‘proq kiriting!";
-document.getElementById("result").innerText =
-    `❌ Xato. ${hint} Qolgan urinish: ${maxTries - tries}`;
 
 </body>
 </html>
