@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎮 Sonni top o‘yini</title>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+    body {
+        font-family: 'Press Start 2P', cursive;
+        margin: 0;
+        padding: 0;
+        text-align: center;
+        background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+        color: white;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    h1 {
+        font-size: 28px;
+        margin-bottom: 20px;
+        color: #00ff99;
+        text-shadow: 2px 2px 5px black;
+    }
+
+    p {
+        font-size: 18px;
+    }
+
+    input, button {
+        padding: 15px;
+        margin: 10px;
+        font-size: 18px;
+        border-radius: 12px;
+        border: none;
+        outline: none;
+        width: 80%;
+        max-width: 300px;
+    }
+
+    input {
+        text-align: center;
+    }
+
+    button {
+        background: #00ff99;
+        color: #111;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    button:hover {
+        background: #00cc7a;
+        transform: scale(1.05);
+    }
+
+    #result {
+        margin-top: 15px;
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+    #info {
+        margin: 15px 0;
+        font-size: 16px;
+        color: #ffdd00;
+    }
+
+</style>
+<style>
+    /* Ism-familiya uchun */
+    #author {
+        position: fixed;      /* Ekranda doimiy turadi */
+        top: 10px;            /* Yuqoridan 10px */
+        right: 10px;          /* O‘ngdan 10px */
+        background: rgba(0,255,153,0.8);  /* Rangli fon, yarim shaffof */
+        color: #111;          /* Matn rangi */
+        padding: 10px 15px;
+        border-radius: 12px;
+        font-weight: bold;
+        font-size: 16px;
+        z-index: 9999;        /* Boshqa elementlardan ustun turadi */
+        box-shadow: 2px 2px 8px black;
+    }
+</style>
+
+</head>
+<body>
+<div id="author">Xamroyev Abror</div>
+
+<h1>🎮 Sonni top o‘yini</h1>
+
+<p>Darajani tanlang:</p>
+<button onclick="startGame(10,5)">Easy (1–10)</button>
+<button onclick="startGame(20,3)">Hard (1–20)</button>
+
+<p id="info"></p>
+
+<input type="number" id="guess" placeholder="Son kiriting">
+<button onclick="check()">Tekshirish</button>
+
+<p id="result"></p>
+
+<script>
+let secret, tries, maxTries;
+
+function startGame(max, t) {
+    secret = Math.floor(Math.random() * max) + 1;
+    maxTries = t;
+    tries = 0;
+    document.getElementById("info").innerText =
+        `Men 1 dan ${max} gacha son o‘yladim. Urinishlar: ${maxTries}`;
+    document.getElementById("result").innerText = "";
+    document.getElementById("guess").value = "";
+}
+
+function check() {
+    let guess = Number(document.getElementById("guess").value);
+    tries++;
+
+    if (!guess) {
+        document.getElementById("result").innerText = "⚠️ Son kiriting!";
+        return;
+    }
+
+    if (guess === secret) {
+        document.getElementById("result").innerHTML = "🎉 🎊 YUTDINGIZ! 🎊 🎉";
+        document.body.style.background = "linear-gradient(135deg, #11998e, #38ef7d)";
+    } else if (tries >= maxTries) {
+        document.getElementById("result").innerHTML =
+            `😢 YUTQAZDINGIZ. To‘g‘ri son: ${secret}`;
+        document.body.style.background = "linear-gradient(135deg, #f00000, #dc281e)";
+    } else {
+        let hint = guess > secret ? "⬇️ Kamroq kiriting!" : "⬆️ Ko‘proq kiriting!";
+        document.getElementById("result").innerText =
+            `❌ Xato. ${hint} Qolgan urinish: ${maxTries - tries}`;
+    }
+}
+</script>
+
+</body>
+</html>
