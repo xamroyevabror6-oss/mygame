@@ -89,9 +89,16 @@
         box-shadow: 2px 2px 8px black;
     }
 </style>
+button:hover {
+    transform: scale(1.05);
+    transition: all 0.2s ease;
+}
 
 </head>
 <body>
+    <audio id="winSound" src="win.mp3"></audio>
+<audio id="failSound" src="fail.mp3"></audio>
+
 <div id="author">Xamroyev Abror</div>
 
 <h1>🎮 Sonni top o‘yini</h1>
@@ -143,6 +150,14 @@ function check() {
     }
 }
 </script>
+if (guess === secret) {
+    document.body.style.background = "linear-gradient(135deg, #11998e, #38ef7d)";
+} else if (tries >= maxTries) {
+    document.body.style.background = "linear-gradient(135deg, #f00000, #dc281e)";
+}
+let hint = guess > secret ? "⬇️ Kamroq kiriting!" : "⬆️ Ko‘proq kiriting!";
+document.getElementById("result").innerText =
+    `❌ Xato. ${hint} Qolgan urinish: ${maxTries - tries}`;
 
 </body>
 </html>
