@@ -50,9 +50,9 @@
         box-shadow: 0 0 15px #00ff99;
     }
 
-    #result {
+    #result, #info {
         margin-top: 20px;
-        font-size: 20px;
+        font-size: 18px;
         font-weight: bold;
         text-shadow: 1px 1px 5px black;
     }
@@ -76,11 +76,24 @@
 
 <div id="author">Xamroyev Abror</div>
 
-<h1 id="question">Savol yuklanmoqda...</h1>
+<h1>🎮 Cheksiz Variantli O‘yin</h1>
 
-<div id="options"></div>
+<div id="startScreen">
+    <button onclick="showInfo()">Ma’lumot</button>
+    <button onclick="startGame()">Boshlash</button>
+</div>
 
-<p id="result"></p>
+<div id="infoText" style="display:none;">
+    Men Xamroyev Abror tomonidan tuzilgan o‘yin.<br>
+    Men sizlarga savol beraman, siz javobni topishga harakat qilasizlar.<br><br>
+    <button onclick="hideInfo()">Orqaga</button>
+</div>
+
+<div id="questionScreen" style="display:none;">
+    <h1 id="question">Savol yuklanmoqda...</h1>
+    <div id="options"></div>
+    <p id="result"></p>
+</div>
 
 <audio id="winSound" src="win.mp3"></audio>
 <audio id="failSound" src="fail.mp3"></audio>
@@ -88,74 +101,67 @@
 <script>
 // Savollar massivi
 const questions = [
-    {
-        q: "O‘zbekiston poytaxti qaysi?",
-        options: ["Samarqand", "Toshkent", "Buxoro"],
-        answer: 1
-    },
-    {
-        q: "Python dasturlash tili qaysi yil yaratilgan?",
-        options: ["1991", "2000", "1985"],
-        answer: 0
-    },
-    {
-        q: "HTML nima uchun ishlatiladi?",
-        options: ["Web sahifa yaratish", "Musika tinglash", "Video o‘ynash"],
-        answer: 0
-    },
-    {
-        q: "JavaScript qayerda ishlaydi?",
-        options: ["Brauzer", "Muzey", "Kompyuter qotib qoladi"],
-        answer: 0
-    },
-    {
-        q: "Yer qaysi sayyoraga tegishli?",
-        options: ["Mars", "Yer", "Jupiter"],
-        answer: 1
-    },
-    // Qo‘shimcha qiyinroq savollarni shu yerga qo‘shish mumkin
+    {q: "O‘zbekiston poytaxti qaysi?", options: ["Samarqand","Toshkent","Buxoro"], answer:1},
+    {q: "Python dasturlash tili qaysi yil yaratilgan?", options:["1991","2000","1985"], answer:0},
+    {q: "HTML nima uchun ishlatiladi?", options:["Web sahifa yaratish","Musika tinglash","Video o‘ynash"], answer:0},
+    {q: "JavaScript qayerda ishlaydi?", options:["Brauzer","Muzey","Kompyuter qotadi"], answer:0},
+    {q: "Yer qaysi sayyoraga tegishli?", options:["Mars","Yer","Jupiter"], answer:1}
 ];
 
 // Global o‘zgaruvchi
 let currentQuestion;
 
-// Tasodifiy savol tanlash
+// Tugmalar funksiyalari
+function showInfo() {
+    document.getElementById("startScreen").style.display = "none";
+    document.getElementById("infoText").style.display = "block";
+}
+
+function hideInfo() {
+    document.getElementById("infoText").style.display = "none";
+    document.getElementById("startScreen").style.display = "block";
+}
+
+function startGame() {
+    document.getElementById("startScreen").style.display = "none";
+    document.getElementById("questionScreen").style.display = "block";
+    nextQuestion();
+}
+
+// Dinamik savollar
 function nextQuestion() {
-    currentQuestion = questions[Math.floor(Math.random() * questions.length)];
+    currentQuestion = questions[Math.floor(Math.random()*questions.length)];
     document.getElementById("question").innerText = currentQuestion.q;
 
     const optionsDiv = document.getElementById("options");
     optionsDiv.innerHTML = "";
 
-    currentQuestion.options.forEach((opt, index) => {
+    currentQuestion.options.forEach((opt,index)=>{
         const btn = document.createElement("button");
         btn.innerText = opt;
-        btn.setAttribute("data-index", index);
+        btn.setAttribute("data-index",index);
         btn.onclick = checkAnswer;
         optionsDiv.appendChild(btn);
     });
 
-    document.getElementById("result").innerText = "";
+    document.getElementById("result").innerText="";
     document.body.style.background = "linear-gradient(135deg, #0f2027, #203a43, #2c5364)";
 }
 
 // Javobni tekshirish
-function checkAnswer(e) {
+function checkAnswer(e){
     const index = Number(e.target.getAttribute("data-index"));
-    if(index === currentQuestion.answer) {
-        document.getElementById("result").innerText = "🎉 To‘g‘ri javob!";
+    if(index===currentQuestion.answer){
+        document.getElementById("result").innerText="🎉 To‘g‘ri javob!";
         document.getElementById("winSound").play();
-        document.body.style.background = "linear-gradient(135deg, #11998e, #38ef7d)";
-    } else {
-        document.getElementById("result").innerText = `❌ Xato. To‘g‘ri javob: ${currentQuestion.options[currentQuestion.answer]}`;
+        document.body.style.background="linear-gradient(135deg,#11998e,#38ef7d)";
+    } else{
+        document.getElementById("result").innerText=`❌ Xato. To‘g‘ri javob: ${currentQuestion.options[currentQuestion.answer]}`;
         document.getElementById("failSound").play();
-        document.body.style.background = "linear-gradient(135deg, #f00000, #dc281e)";
+        document.body.style.background="linear-gradient(135deg,#f00000,#dc281e)";
     }
-    setTimeout(nextQuestion, 2000); // 2 soniya kutib yangi savol
+    setTimeout(nextQuestion,2000); // 2 soniya kutib yangi savol
 }
-
-// O‘yinni boshlash
-nextQuestion();
 </script>
 
 </body>
