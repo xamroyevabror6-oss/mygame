@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <title>Sonni top o‘yini</title>
+    <style>
+        body {
+            font-family: Arial;
+            text-align: center;
+            background: #111;
+            color: white;
+        }
+        input, button {
+            padding: 10px;
+            font-size: 16px;
+            margin: 5px;
+        }
+        button {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<h1>🎮 Sonni top o‘yini</h1>
+
+<p>Darajani tanlang:</p>
+<button onclick="startGame(10,5)">Easy (1–10)</button>
+<button onclick="startGame(20,3)">Hard (1–20)</button>
+
+<p id="info"></p>
+
+<input type="number" id="guess" placeholder="Son kiriting">
+<button onclick="check()">Tekshirish</button>
+
+<p id="result"></p>
+
+<script>
+let secret, tries, maxTries;
+
+function startGame(max, t) {
+    secret = Math.floor(Math.random() * max) + 1;
+    maxTries = t;
+    tries = 0;
+    document.getElementById("info").innerText =
+        `Men 1 dan ${max} gacha son o‘yladim. Urinishlar: ${maxTries}`;
+    document.getElementById("result").innerText = "";
+}
+
+function check() {
+    let guess = Number(document.getElementById("guess").value);
+    tries++;
+
+    if (guess === secret) {
+        document.getElementById("result").innerText = "🎉 YUTDINGIZ!";
+    } else if (tries >= maxTries) {
+        document.getElementById("result").innerText =
+            "😢 YUTQAZDINGIZ. To‘g‘ri son: " + secret;
+    } else {
+        document.getElementById("result").innerText =
+            "❌ Xato. Qolgan urinish: " + (maxTries - tries);
+    }
+}
+</script>
+
+</body>
+</html>
