@@ -50,7 +50,7 @@
         box-shadow: 0 0 15px #00ff99;
     }
 
-    #result, #info {
+    #result, #info, #stats {
         margin-top: 20px;
         font-size: 18px;
         font-weight: bold;
@@ -70,6 +70,27 @@
         z-index: 9999;
         box-shadow: 2px 2px 8px black;
     }
+
+    #endBtn {
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        background: #ffdd00;
+        color: #111;
+        padding: 10px 15px;
+        border-radius: 12px;
+        font-weight: bold;
+        z-index: 9999;
+        box-shadow: 2px 2px 8px black;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    #endBtn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 15px #ffdd00;
+    }
+
 </style>
 </head>
 <body>
@@ -78,21 +99,26 @@
 
 <h1>🎮 Cheksiz Variantli O‘yin</h1>
 
+<!-- Start Screen -->
 <div id="startScreen">
     <button onclick="showInfo()">Ma’lumot</button>
     <button onclick="startGame()">Boshlash</button>
 </div>
 
+<!-- Info Screen -->
 <div id="infoText" style="display:none;">
     Men Xamroyev Abror tomonidan tuzilgan o‘yin.<br>
     Men sizlarga savol beraman, siz javobni topishga harakat qilasizlar.<br><br>
     <button onclick="hideInfo()">Orqaga</button>
 </div>
 
+<!-- Question Screen -->
 <div id="questionScreen" style="display:none;">
+    <div id="endBtn" onclick="endGame()">O‘yinni tugatish</div>
     <h1 id="question">Savol yuklanmoqda...</h1>
     <div id="options"></div>
     <p id="result"></p>
+    <p id="stats"></p>
 </div>
 
 <audio id="winSound" src="win.mp3"></audio>
@@ -108,7 +134,8 @@ const questions = [
     {q: "Yer qaysi sayyoraga tegishli?", options:["Mars","Yer","Jupiter"], answer:1}
 ];
 
-// Global o‘zgaruvchi
+// Statistika
+let total=0, correct=0, wrong=0;
 let currentQuestion;
 
 // Tugmalar funksiyalari
@@ -123,8 +150,10 @@ function hideInfo() {
 }
 
 function startGame() {
-    document.getElementById("startScreen").style.display = "none";
-    document.getElementById("questionScreen").style.display = "block";
+    total=0; correct=0; wrong=0;
+    document.getElementById("startScreen").style.display="none";
+    document.getElementById("questionScreen").style.display="block";
+    document.getElementById("stats").innerText="";
     nextQuestion();
 }
 
@@ -151,16 +180,27 @@ function nextQuestion() {
 // Javobni tekshirish
 function checkAnswer(e){
     const index = Number(e.target.getAttribute("data-index"));
+    total++;
     if(index===currentQuestion.answer){
         document.getElementById("result").innerText="🎉 To‘g‘ri javob!";
         document.getElementById("winSound").play();
         document.body.style.background="linear-gradient(135deg,#11998e,#38ef7d)";
+        correct++;
     } else{
         document.getElementById("result").innerText=`❌ Xato. To‘g‘ri javob: ${currentQuestion.options[currentQuestion.answer]}`;
         document.getElementById("failSound").play();
         document.body.style.background="linear-gradient(135deg,#f00000,#dc281e)";
+        wrong++;
     }
-    setTimeout(nextQuestion,2000); // 2 soniya kutib yangi savol
+    document.getElementById("stats").innerText=`Savollar: ${total} | To‘g‘ri: ${correct} | Xato: ${wrong} | Foiz: ${((correct/total)*100).toFixed(1)}%`;
+    setTimeout(nextQuestion,2000);
+}
+
+// O‘yinni tugatish
+function endGame(){
+    alert(`O‘yin tugadi!\nJami savollar: ${total}\nTo‘g‘ri javoblar: ${correct}\nXato javoblar: ${wrong}\nFoiz: ${((correct/total)*100).toFixed(1)}%`);
+    document.getElementById("questionScreen").style.display="none";
+    document.getElementById("startScreen").style.display="block";
 }
 </script>
 
