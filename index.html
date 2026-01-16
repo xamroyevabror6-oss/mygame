@@ -25,54 +25,59 @@ button{padding:12px;margin:6px;width:90%;max-width:320px}
 </div>
 
 <script>
-// ===== SAVOLLAR =====
 const data = {
  math: [
-  {q:"2+3=?", o:["4","5","6"], a:1},
-  {q:"6×2=?", o:["12","8","10"], a:0},
-  {q:"9−4=?", o:["3","5","6"], a:1},
-  {q:"√25=?", o:["4","5","6"], a:1}
+  {q:"2+3=?",o:["4","5","6"],a:1},
+  {q:"7−2=?",o:["4","5","6"],a:1},
+  {q:"6×3=?",o:["18","16","12"],a:0},
+  {q:"12÷4=?",o:["2","3","4"],a:1},
+  {q:"√36=?",o:["5","6","7"],a:1},
+  {q:"10+15=?",o:["20","25","30"],a:1},
+  {q:"9×4=?",o:["36","32","40"],a:0},
+  {q:"20−8=?",o:["10","12","14"],a:1},
+  {q:"100÷5=?",o:["15","20","25"],a:1},
+  {q:"√49=?",o:["6","7","8"],a:1}
  ],
  history: [
-  {q:"Amir Temur qachon tug‘ilgan?", o:["1336","1405","1220"], a:0},
-  {q:"Ikkinchi jahon urushi qachon tugagan?", o:["1941","1945","1950"], a:1},
-  {q:"Buyuk Ipak yo‘li nimaga xizmat qilgan?", o:["Savdo","Urush","Sport"], a:0}
+  {q:"Amir Temur tug‘ilgan yil?",o:["1336","1405","1220"],a:0},
+  {q:"Ikkinchi jahon urushi tugagan yil?",o:["1943","1945","1950"],a:1},
+  {q:"O‘zbekiston mustaqilligi qachon?",o:["1989","1990","1991"],a:2},
+  {q:"Buyuk Ipak yo‘li nimaga xizmat qilgan?",o:["Savdo","Urush","Sport"],a:0},
+  {q:"Birinchi prezident kim?",o:["Karimov","Mirziyoyev","Temur"],a:0},
+  {q:"BMT qachon tuzilgan?",o:["1945","1939","1955"],a:0},
+  {q:"Rim imperiyasi qayerda joylashgan?",o:["Yevropa","Osiyo","Afrika"],a:0},
+  {q:"Qadimgi Misr qayerda?",o:["Nil","Frot","Amudaryo"],a:0}
  ]
 };
 
 let questions = [];
 let correct = 0;
 
-// ===== BOSHLASH =====
 function start(type){
- questions = [...data[type]]; // nusxa olinadi
+ questions = [...data[type]];
  correct = 0;
-
  document.getElementById("menu").style.display="none";
  document.getElementById("game").style.display="block";
-
  next();
 }
 
-// ===== KEYINGI SAVOL (QAYTMAYDI) =====
 function next(){
- if(questions.length === 0){
-  alert("Test tugadi!\nTo‘g‘ri javoblar: " + correct);
+ if(questions.length===0){
+  alert("Test tugadi!\nTo‘g‘ri javoblar: "+correct);
   location.reload();
   return;
  }
 
- const q = questions.shift(); // ← SAVOL O‘CHIRILDI
-
+ const q = questions.shift(); // QAYTMAYDI
  document.getElementById("q").innerText = q.q;
  const box = document.getElementById("o");
- box.innerHTML = "";
+ box.innerHTML="";
 
  q.o.forEach((t,i)=>{
-  const b = document.createElement("button");
-  b.innerText = t;
-  b.onclick = ()=>{
-    if(i === q.a) correct++;
+  const b=document.createElement("button");
+  b.innerText=t;
+  b.onclick=()=>{
+    if(i===q.a) correct++;
     next();
   };
   box.appendChild(b);
