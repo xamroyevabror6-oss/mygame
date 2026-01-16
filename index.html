@@ -7,17 +7,15 @@
 body{
   margin:0;font-family:Arial;
   background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
-  color:#fff;text-align:center
+  color:white;text-align:center;
 }
 .container{max-width:600px;margin:auto;padding:20px}
 button{
-  width:100%;padding:14px;margin:8px 0;
-  font-size:18px;border:none;border-radius:10px;
-  background:#00c6ff;cursor:pointer
+  width:100%;padding:14px;margin:8px 0;font-size:18px;border:none;border-radius:10px;background:#00c6ff;cursor:pointer;
 }
 button:hover{background:#00f2fe}
 .hidden{display:none}
-.top{display:flex;justify-content:space-between}
+.top{display:flex;justify-content:space-between;margin-bottom:10px;}
 </style>
 </head>
 <body>
@@ -25,7 +23,7 @@ button:hover{background:#00f2fe}
 <div class="container">
 
 <div id="menu">
-  <h1>🎮 Quiz Game</h1>
+  <h1>🎮 Bilimlar O‘yini</h1>
   <button onclick="start('math')">📐 Matematika</button>
   <button onclick="start('history')">📜 Tarix</button>
   <button onclick="start('psy')">🧠 Psixologiya</button>
@@ -44,76 +42,67 @@ button:hover{background:#00f2fe}
 </div>
 
 <script>
-// ===== 10 000 SAVOL GENERATORI =====
-function genMath(n){
-  const arr=[];
-  for(let i=1;i<=n;i++){
-    const a=i%50+1, b=(i*3)%50+1;
-    const correct=a+b;
-    arr.push({
-      q:`${a} + ${b} = ?`,
-      options:[correct-1, correct, correct+1],
-      a:1
-    });
-  }
-  return arr;
+// ===== HAR FANDA 200 TA SAVOL (NAMUNA) =====
+// Matematika: 1–200
+const mathQ = [];
+for(let i=1;i<=200;i++){
+  const a=i%50+1;
+  const b=(i*3)%50+1;
+  const correct=a+b;
+  mathQ.push({
+    q:`${a} + ${b} = ?`,
+    options:[correct-1,correct,correct+1],
+    a:1
+  });
 }
 
-function genHistory(n){
-  const arr=[];
-  for(let i=1;i<=n;i++){
-    arr.push({
-      q:`O‘zbekiston mustaqilligi nechanchi yil? (variant ${i})`,
-      options:["1991","1989","1993"],
-      a:0
-    });
-  }
-  return arr;
+// Tarix: 1–200
+const historyQ = [];
+for(let i=1;i<=200;i++){
+  historyQ.push({
+    q:`Tarix savol №${i}?`,
+    options:["Variant 1","Variant 2","Variant 3"],
+    a:0
+  });
 }
 
-function genPsy(n){
-  const arr=[];
-  for(let i=1;i<=n;i++){
-    arr.push({
-      q:`Stress nima? (savol ${i})`,
-      options:["Bosim","Uyqu","Kasallik"],
-      a:0
-    });
-  }
-  return arr;
+// Psixologiya: 1–200
+const psyQ = [];
+for(let i=1;i<=200;i++){
+  psyQ.push({
+    q:`Psixologik savol №${i}?`,
+    options:["Variant A","Variant B","Variant C"],
+    a:0
+  });
 }
 
-function genLang(n){
-  const arr=[];
-  for(let i=1;i<=n;i++){
-    arr.push({
-      q:`Ot so‘z turkumi nimani bildiradi? (${i})`,
-      options:["Narsa","Harakat","Belgi"],
-      a:0
-    });
-  }
-  return arr;
+// Ona tili: 1–200
+const langQ = [];
+for(let i=1;i<=200;i++){
+  langQ.push({
+    q:`Ona tili savol №${i}?`,
+    options:["Variant X","Variant Y","Variant Z"],
+    a:0
+  });
 }
 
-// 10 000 TA SAVOL
-const allQuestions={
-  math: genMath(10000),
-  history: genHistory(10000),
-  psy: genPsy(10000),
-  lang: genLang(10000)
-};
-
+// ===== O‘YIN LOGIKASI =====
 let current=[], idx=0, correct=0, total=0;
+let used = new Set();
 
-function shuffle(a){
-  for(let i=a.length-1;i>0;i--){
+function shuffle(arr){
+  for(let i=arr.length-1;i>0;i--){
     const j=Math.floor(Math.random()*(i+1));
-    [a[i],a[j]]=[a[j],a[i]];
+    [arr[i],arr[j]]=[arr[j],arr[i]];
   }
 }
 
 function start(type){
-  current=[...allQuestions[type]];
+  used.clear();
+  if(type==="math") current=[...mathQ];
+  if(type==="history") current=[...historyQ];
+  if(type==="psy") current=[...psyQ];
+  if(type==="lang") current=[...langQ];
   shuffle(current);
   idx=0; correct=0; total=0;
   document.getElementById("menu").classList.add("hidden");
@@ -122,8 +111,20 @@ function start(type){
 }
 
 function nextQ(){
-  if(idx>=current.length){ shuffle(current); idx=0; }
-  const q=current[idx++];
+  if(used.size >= current.length){
+    alert("Barcha savollar tugadi!\nNatija: "+correct+"/"+total+" ("+Math.round(correct*100/total)+"%)");
+    location.reload();
+    return;
+  }
+
+  let q;
+  let attempts=0;
+  do{
+    q=current[Math.floor(Math.random()*current.length)];
+    attempts++;
+  }while(used.has(q.q) && attempts<1000);
+
+  used.add(q.q);
   document.getElementById("question").innerText=q.q;
   const o=document.getElementById("options");
   o.innerHTML="";
@@ -146,5 +147,6 @@ function finish(){
   location.reload();
 }
 </script>
+
 </body>
 </html>
