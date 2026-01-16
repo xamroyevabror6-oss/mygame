@@ -3,124 +3,206 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Test O‘yini - Matematika & Geografiya</title>
+<title>Test O‘yini</title>
+
 <style>
-body { font-family:Arial,sans-serif; margin:0; padding:0; background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); color:#fff; display:flex; flex-direction:column; align-items:center; min-height:100vh;}
-h1 { margin-top:60px; font-size:2.5rem; color:#ffdd00; text-shadow:2px 2px 8px #000; text-align:center;}
-#menu, #game { width:90%; max-width:600px; text-align:center; margin-top:20px;}
-button { padding:14px; margin:8px 0; width:100%; font-size:1.1rem; border:none; border-radius:12px; cursor:pointer; transition:0.3s; box-shadow:0 6px 10px rgba(0,0,0,0.5);}
-button:hover { transform: scale(1.05); background:#ffdd00; color:#000; }
-.option { background:#fff; color:#000; font-weight:bold; margin-top:10px;}
-#top { display:flex; justify-content:space-between; padding:10px 20px; font-size:1rem; background:#222; position:sticky; top:0; border-radius:10px;}
-#footer { position:fixed; bottom:0; right:0; padding:8px; font-size:14px; color:#ccc;}
-#header { position:fixed; top:0; left:0; padding:8px; font-size:14px; color:#ccc;}
-#q { margin:40px 0 20px 0; font-size:1.4rem; min-height:80px; background: rgba(0,0,0,0.5); padding:15px; border-radius:12px; box-shadow:0 4px 10px rgba(0,0,0,0.5); line-height:1.4;}
+body{
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:linear-gradient(135deg,#1f4037,#99f2c8);
+  color:#fff;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+
+#header{
+  position:fixed;
+  top:8px;
+  left:10px;
+  font-size:14px;
+  opacity:0.8;
+}
+
+#footer{
+  position:fixed;
+  bottom:8px;
+  right:10px;
+  font-size:14px;
+  opacity:0.8;
+}
+
+h1{
+  margin-top:50px;
+  text-shadow:2px 2px 8px #000;
+}
+
+#menu, #game{
+  width:90%;
+  max-width:600px;
+  margin-top:20px;
+  text-align:center;
+}
+
+button{
+  width:100%;
+  padding:15px;
+  margin:10px 0;
+  font-size:18px;
+  border:none;
+  border-radius:14px;
+  cursor:pointer;
+  background:#fff;
+  color:#000;
+  font-weight:bold;
+  transition:0.3s;
+}
+
+button:hover{
+  background:#ffeb3b;
+  transform:scale(1.05);
+}
+
+#top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  background:rgba(0,0,0,0.4);
+  padding:10px;
+  border-radius:10px;
+}
+
+#question{
+  margin:20px 0;
+  padding:15px;
+  background:rgba(0,0,0,0.4);
+  border-radius:12px;
+  font-size:20px;
+  min-height:70px;
+}
+
+.option{
+  background:#ffffff;
+  color:#000;
+}
 </style>
 </head>
+
 <body>
 
 <div id="header">Xamroyev Abror</div>
-<div id="footer">Xalilova Shohida</div>
 
 <h1>Test O‘yini</h1>
-<p style="text-align:center;">Matematika & Geografiya (100 savol har bo‘lim)</p>
 
 <div id="menu">
-<button onclick="startGame('math')">Matematika</button>
-<button onclick="startGame('geo')">Geografiya</button>
+  <button onclick="start('math')">🧮 Matematika</button>
+  <button onclick="start('geo')">🌍 Geografiya</button>
+  <button onclick="start('psy')">🧠 Psixologik test</button>
 </div>
 
-<div id="game" style="display:none">
-<div id="top">
-<span id="count">0/0</span>
-<button onclick="finish()">Tugatish</button>
-</div>
-<div id="q"></div>
-<div id="o"></div>
+<div id="game" style="display:none;">
+  <div id="top">
+    <span id="counter">1 / 100</span>
+    <button onclick="finish()">Tugatish</button>
+  </div>
+  <div id="question"></div>
+  <div id="answers"></div>
 </div>
 
 <script>
-// ==== 100 TA MATEMATIKA SAVOL (son javoblari) ====
-const mathQ=[];
-for(let i=1;i<=100;i++){
+// ===== MATEMATIKA =====
+const math=[];
+for(let i=0;i<100;i++){
   let a=Math.floor(Math.random()*50)+1;
   let b=Math.floor(Math.random()*50)+1;
-  let question,correctText;
-  switch(i%4){
-    case 0: question=`${a} + ${b} = ?`; correctText=(a+b).toString(); break;
-    case 1: question=`${a} - ${b} = ?`; correctText=(a-b).toString(); break;
-    case 2: question=`${a} × ${b} = ?`; correctText=(a*b).toString(); break;
-    case 3: question=`${a*b} ÷ ${a} = ?`; correctText=b.toString(); break;
-  }
-  // 3 ta javob son matni
-  let ans=i%3;
-  let options=[];
-  for(let j=0;j<3;j++){
-    if(j===ans) options.push(correctText);
-    else options.push((Math.floor(Math.random()*100)+1).toString());
-  }
-  mathQ.push({q:question,o:options,a:ans});
+  let correct=a+b;
+  let options=[
+    correct,
+    correct+Math.floor(Math.random()*5)+1,
+    correct-Math.floor(Math.random()*5)-1
+  ];
+  options.sort(()=>Math.random()-0.5);
+  math.push({
+    q:`${a} + ${b} = ?`,
+    o:options.map(x=>x.toString()),
+    a:options.indexOf(correct)
+  });
 }
 
-// ==== 100 TA GEOGRAFIYA SAVOL (matn javoblari) ====
-const geoQ=[];
-const geoQuestionsList = [
-  {q:"O‘zbekiston poytaxti qayer?", o:["Toshkent","Samarqand","Buxoro"], a:0},
-  {q:"Amazon daryosi qaysi qit’ada?", o:["Afrika","Janubiy Amerika","Osiyo"], a:1},
-  {q:"Sahara cho‘li qaysi qit’ada?", o:["Afrika","Osiyo","Avstraliya"], a:0},
-  {q:"Evropa va Osiyo o‘rtasidagi tog‘lar?", o:["Alpom Tog‘lari","Ural Tog‘lari","Himalay"], a:1},
-  {q:"Nyu-York qaysi davlatda?", o:["AQSh","Kanada","Braziliya"], a:0},
-  {q:"Nil daryosi qaysi qit’ada?", o:["Afrika","Evropa","Osiyo"], a:0},
-  {q:"Mount Everest qayerda?", o:["Nepal","Hindiston","Pokiston"], a:0},
-  {q:"Qaysi dengiz Tuzli dengiz bilan chegaradosh?", o:["Qora","Oq","Sariq"], a:0},
-  {q:"Qaysi okean eng katta?", o:["Tinch","Atlantik","Hind"], a:0},
-  {q:"Kanada poytaxti qayer?", o:["Ottava","Toronto","Vankuver"], a:0}
+// ===== GEOGRAFIYA =====
+const geoBase=[
+ ["O‘zbekiston poytaxti qayer?","Toshkent","Samarqand","Buxoro"],
+ ["Eng katta okean qaysi?","Tinch","Atlantika","Hind"],
+ ["Nil daryosi qaysi qit’ada?","Afrika","Osiyo","Yevropa"],
+ ["Everest tog‘i qayerda?","Nepal","Hindiston","Xitoy"],
+ ["Kanada poytaxti qayer?","Ottava","Toronto","Vankuver"]
 ];
+
+const geo=[];
 for(let i=0;i<100;i++){
-  let base=geoQuestionsList[i % geoQuestionsList.length];
-  geoQ.push({q:base.q + ` (#${i+1})`, o:base.o, a:base.a});
+  let b=geoBase[i%geoBase.length];
+  geo.push({
+    q:b[0]+" ("+(i+1)+")",
+    o:[b[1],b[2],b[3]],
+    a:0
+  });
 }
 
-// ==== BO‘LIMLAR DATA ====
-const data={math:mathQ,geo:geoQ};
-let questions=[],correct=0,totalAnswered=0;
+// ===== PSIXOLOGIYA =====
+const psyBase=[
+ ["Qiyin vaziyatda siz nima qilasiz?","Sokin qolaman","Hayajonlanaman","Yordam so‘rayman"],
+ ["Yangi muhitda o‘zingizni qanday tutasiz?","Faol","Kuzatuvchi","Uyatchan"],
+ ["Qaror qabul qilishda nimaga tayanasiz?","Aql","His-tuyg‘u","Maslahat"],
+ ["Bo‘sh vaqtingizda nima qilasiz?","Kitob","Telefon","Sport"],
+ ["Odamlar bilan muloqotda siz...","Ochıq","Tanlab","Kamgap"]
+];
 
-function startGame(type){
-  questions=[...data[type]];
-  questions.sort(()=>Math.random()-0.5); // aralashadi
-  correct=0; totalAnswered=0;
+const psy=[];
+for(let i=0;i<100;i++){
+  let p=psyBase[i%psyBase.length];
+  psy.push({
+    q:p[0]+" ("+(i+1)+")",
+    o:[p[1],p[2],p[3]],
+    a:0
+  });
+}
+
+// ===== O‘YIN LOGIKASI =====
+const all={math,geo,psy};
+let questions=[],index=0,score=0;
+
+function start(type){
+  questions=[...all[type]];
+  questions.sort(()=>Math.random()-0.5);
+  index=0; score=0;
   document.getElementById("menu").style.display="none";
   document.getElementById("game").style.display="block";
-  next();
+  show();
 }
 
-function next(){
-  if(questions.length===0){finish();return;}
-  const q=questions.shift();
-  document.getElementById("q").innerText=q.q;
-  document.getElementById("count").innerText=(totalAnswered+1)+"/100";
-  const box=document.getElementById("o");
-  box.innerHTML="";
-  q.o.forEach((t,i)=>{
-    const b=document.createElement("button");
+function show(){
+  if(index>=100){ finish(); return; }
+  let q=questions[index];
+  document.getElementById("question").innerText=q.q;
+  document.getElementById("counter").innerText=(index+1)+" / 100";
+  let a=document.getElementById("answers");
+  a.innerHTML="";
+  q.o.forEach((text,i)=>{
+    let b=document.createElement("button");
     b.className="option";
-    b.innerText=t;
+    b.innerText=text;
     b.onclick=()=>{
-      if(i===q.a) correct++;
-      totalAnswered++;
-      next();
+      if(i===q.a) score++;
+      index++;
+      show();
     };
-    box.appendChild(b);
+    a.appendChild(b);
   });
 }
 
 function finish(){
-  alert(
-    "Test tugadi!\n"+
-    "To‘g‘ri javoblar: "+correct+"\n"+
-    "Xato javoblar: "+(100-correct)+"\n"+
-    "Foiz: "+Math.round(correct)+"%"
-  );
+  alert("Test tugadi!\nTo‘g‘ri javoblar: "+score+" / 100");
   location.reload();
 }
 </script>
