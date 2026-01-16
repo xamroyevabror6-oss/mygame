@@ -3,83 +3,87 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Test o‘yini</title>
+<title>Dahshatli Test O‘yini</title>
 <style>
 body {
     font-family: 'Arial', sans-serif;
-    background: linear-gradient(135deg, #1e1e1e, #3a3a3a);
-    margin: 0;
-    padding: 0;
-    color: #fff;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    align-items: center;
+    margin:0;
+    padding:0;
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    color:#fff;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    min-height:100vh;
 }
 h1 {
-    margin-top: 60px;
-    font-size: 2.5rem;
-    color: #ffdd00;
-    text-shadow: 2px 2px 5px #000;
+    margin-top:70px;
+    font-size:2.5rem;
+    color:#ffdd00;
+    text-shadow: 2px 2px 8px #000;
 }
 #menu, #game {
-    width: 90%;
-    max-width: 500px;
-    text-align: center;
-    margin-top: 20px;
+    width:90%;
+    max-width:500px;
+    text-align:center;
+    margin-top:20px;
 }
 button {
-    padding: 15px;
-    margin: 8px 0;
-    width: 100%;
-    font-size: 1.1rem;
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: 0.2s;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    padding:16px;
+    margin:10px 0;
+    width:100%;
+    font-size:1.2rem;
+    border:none;
+    border-radius:15px;
+    cursor:pointer;
+    transition:0.3s;
+    box-shadow:0 6px 10px rgba(0,0,0,0.5);
 }
 button:hover {
     transform: scale(1.05);
-    background: #ffdd00;
-    color: #000;
+    background:#ffdd00;
+    color:#000;
 }
 .option {
-    background: #fff;
-    color: #000;
-    font-weight: bold;
+    background:#fff;
+    color:#000;
+    font-weight:bold;
 }
 #top {
-    display: flex;
-    justify-content: space-between;
-    padding: 12px 20px;
-    font-size: 1rem;
-    background: #333;
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    border-radius: 8px;
+    display:flex;
+    justify-content:space-between;
+    padding:12px 20px;
+    font-size:1rem;
+    background:#222;
+    position:sticky;
+    top:0;
+    z-index:10;
+    border-radius:10px;
 }
 #footer {
-    position: fixed;
-    bottom: 0;
-    right: 0;
-    padding: 8px;
-    font-size: 14px;
-    color: #ccc;
+    position:fixed;
+    bottom:0;
+    right:0;
+    padding:8px;
+    font-size:14px;
+    color:#ccc;
 }
 #header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    padding: 8px;
-    font-size: 14px;
-    color: #ccc;
+    position:fixed;
+    top:0;
+    left:0;
+    padding:8px;
+    font-size:14px;
+    color:#ccc;
 }
 #q {
-    margin: 40px 0 20px 0;
-    font-size: 1.4rem;
-    min-height: 60px;
+    margin:40px 0 20px 0;
+    font-size:1.5rem;
+    min-height:80px;
+    background: rgba(0,0,0,0.4);
+    padding:15px;
+    border-radius:12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
 }
 </style>
 </head>
@@ -88,7 +92,7 @@ button:hover {
 <div id="header">Xamroyev Abror</div>
 <div id="footer">Xalilova Shohida</div>
 
-<h1>Test o‘yini</h1>
+<h1>Dahshatli Test O‘yini</h1>
 <p>Xamroyev Abror tomonidan tuzilgan</p>
 
 <div id="menu">
@@ -101,47 +105,43 @@ button:hover {
 <span id="count">0/0</span>
 <button onclick="finish()">Tugatish</button>
 </div>
-<h2 id="q"></h2>
+<div id="q"></div>
 <div id="o"></div>
 </div>
 
 <script>
-// ===== 1000 TA MATEMATIKA =====
+// ===== MATEMATIKA 1000 =====
 const mathQ = [];
 for(let i=1;i<=1000;i++){
     let a = Math.floor(Math.random()*50)+1;
     let b = Math.floor(Math.random()*50)+1;
     let opType = i % 4;
     let question, correct, options, ans;
-
     if(opType===0){question=`${a}+${b}=?`; correct=a+b;}
     else if(opType===1){question=`${a}-${b}=?`; correct=a-b;}
     else if(opType===2){question=`${a}×${b}=?`; correct=a*b;}
     else{question=`${a*b}÷${a}=?`; correct=b;}
-
     ans = i%3;
     options = [];
     for(let j=0;j<3;j++){
         if(j===ans) options.push(correct);
         else options.push(correct+Math.floor(Math.random()*5+1)*(j+1));
     }
-
     mathQ.push({q:question,o:options,a:ans});
 }
 
-// ===== 1000 TA TARIX =====
+// ===== TARIX 1000 =====
 const historyQ = [];
 for(let i=1;i<=1000;i++){
     historyQ.push({
-        q: `Tarix savoli #${i}`, // noyob savol
+        q:`Tarix savoli #${i}`, // noyob savol
         o: ["Javob A","Javob B","Javob C"],
-        a: i%3
+        a:i%3
     });
 }
 
 // ===== BUTUN SAVOLLAR =====
 const data = {math: mathQ, history: historyQ};
-
 let questions = [];
 let correct = 0;
 let totalAnswered = 0;
@@ -149,8 +149,8 @@ let totalAnswered = 0;
 // ===== BOSHLASH =====
 function start(type){
     questions = [...data[type]];
-    correct = 0;
-    totalAnswered = 0;
+    correct=0;
+    totalAnswered=0;
     document.getElementById("menu").style.display="none";
     document.getElementById("game").style.display="block";
     next();
@@ -162,14 +162,11 @@ function next(){
         finish();
         return;
     }
-
-    const q = questions.shift(); // noyob, takrorlanmaydi
-    document.getElementById("q").innerText = q.q;
-    document.getElementById("count").innerText = (totalAnswered+1) + "/" + (totalAnswered + questions.length +1);
-
+    const q = questions.shift(); // noyob savol
+    document.getElementById("q").innerText = q.q; // savol ko‘rinadi
+    document.getElementById("count").innerText = (totalAnswered+1)+"/"+(totalAnswered+questions.length+1);
     const box = document.getElementById("o");
     box.innerHTML="";
-
     q.o.forEach((t,i)=>{
         const b = document.createElement("button");
         b.className="option";
@@ -186,10 +183,10 @@ function next(){
 // ===== TUGATISH =====
 function finish(){
     alert(
-        "Test tugadi!\n" +
-        "To‘g‘ri javoblar: " + correct + "\n" +
-        "Xato javoblar: " + (totalAnswered-correct) + "\n" +
-        "Foiz: " + Math.round(correct*100/totalAnswered) + "%"
+        "Test tugadi!\n"+
+        "To‘g‘ri javoblar: "+correct+"\n"+
+        "Xato javoblar: "+(totalAnswered-correct)+"\n"+
+        "Foiz: "+Math.round(correct*100/totalAnswered)+"%"
     );
     location.reload();
 }
