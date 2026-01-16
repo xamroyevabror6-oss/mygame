@@ -203,6 +203,35 @@ function endGame(){
     document.getElementById("startScreen").style.display="block";
 }
 </script>
+let currentQuestion;
+let lastQuestionIndex = -1;
+function nextQuestion() {
+    let randomIndex;
+
+    do {
+        randomIndex = Math.floor(Math.random() * questions.length);
+    } while (randomIndex === lastQuestionIndex);
+
+    lastQuestionIndex = randomIndex;
+    currentQuestion = questions[randomIndex];
+
+    document.getElementById("question").innerText = currentQuestion.q;
+
+    const optionsDiv = document.getElementById("options");
+    optionsDiv.innerHTML = "";
+
+    currentQuestion.options.forEach((opt, index) => {
+        const btn = document.createElement("button");
+        btn.innerText = opt;
+        btn.setAttribute("data-index", index);
+        btn.onclick = checkAnswer;
+        optionsDiv.appendChild(btn);
+    });
+
+    document.getElementById("result").innerText = "";
+    document.body.style.background =
+        "linear-gradient(135deg, #0f2027, #203a43, #2c5364)";
+}
 
 </body>
 </html>
