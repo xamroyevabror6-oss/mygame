@@ -3,250 +3,175 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🎮 Cheksiz Variantli O‘yin</title>
+<title>Savol Javob O‘yini</title>
+
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-
-    body {
-        font-family: 'Press Start 2P', cursive;
-        text-align: center;
-        background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-        color: white;
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        margin: 0;
-        padding: 10px;
-        transition: background 0.5s;
-    }
-
-    h1 {
-        font-size: 26px;
-        margin-bottom: 20px;
-        color: #00ff99;
-        text-shadow: 2px 2px 8px black;
-    }
-
-    button {
-        padding: 15px;
-        margin: 10px;
-        font-size: 16px;
-        border-radius: 15px;
-        border: none;
-        width: 80%;
-        max-width: 300px;
-        cursor: pointer;
-        background: #00ff99;
-        color: #111;
-        font-weight: bold;
-        transition: all 0.3s ease;
-    }
-
-    button:hover {
-        background: #00cc7a;
-        transform: scale(1.05);
-        box-shadow: 0 0 15px #00ff99;
-    }
-
-    #result, #info, #stats {
-        margin-top: 20px;
-        font-size: 18px;
-        font-weight: bold;
-        text-shadow: 1px 1px 5px black;
-    }
-
-    #author {
-        position: fixed;
-        top: 10px;
-        right: 10px;
-        background: rgba(0,255,153,0.8);
-        color: #111;
-        padding: 10px 15px;
-        border-radius: 12px;
-        font-weight: bold;
-        font-size: 16px;
-        z-index: 9999;
-        box-shadow: 2px 2px 8px black;
-    }
-
-    #endBtn {
-        position: fixed;
-        top: 10px;
-        left: 10px;
-        background: #ffdd00;
-        color: #111;
-        padding: 10px 15px;
-        border-radius: 12px;
-        font-weight: bold;
-        z-index: 9999;
-        box-shadow: 2px 2px 8px black;
-        cursor: pointer;
-        transition: 0.3s;
-    }
-
-    #endBtn:hover {
-        transform: scale(1.05);
-        box-shadow: 0 0 15px #ffdd00;
-    }
-
+body{
+    margin:0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+    color:white;
+    text-align:center;
+}
+button{
+    padding:15px;
+    margin:10px;
+    font-size:16px;
+    border:none;
+    border-radius:12px;
+    cursor:pointer;
+    background:#00ff99;
+    font-weight:bold;
+}
+button:hover{transform:scale(1.05);}
+#author{
+    position:fixed;
+    top:10px;
+    right:10px;
+    background:#00ff99;
+    color:black;
+    padding:8px 12px;
+    border-radius:10px;
+}
+#endBtn{
+    position:fixed;
+    top:10px;
+    left:10px;
+    background:#ffdd00;
+    color:black;
+    padding:8px 12px;
+    border-radius:10px;
+    cursor:pointer;
+}
 </style>
 </head>
+
 <body>
 
 <div id="author">Xamroyev Abror</div>
 
-<h1>🎮 Cheksiz Variantli O‘yin</h1>
-
-<!-- Start Screen -->
-<div id="startScreen">
+<!-- START MENU -->
+<div id="menu">
+    <h1>🎮 Savol Javob O‘yini</h1>
     <button onclick="showInfo()">Ma’lumot</button>
     <button onclick="startGame()">Boshlash</button>
 </div>
 
-<!-- Info Screen -->
-<div id="infoText" style="display:none;">
-    Men Xamroyev Abror tomonidan tuzilgan o‘yin.<br>
-    Men sizlarga savol beraman, siz javobni topishga harakat qilasizlar.<br><br>
-    <button onclick="hideInfo()">Orqaga</button>
+<!-- INFO -->
+<div id="info" style="display:none;">
+    <p>
+        Men Xamroyev Abror tomonidan tuzilgan o‘yinman.<br>
+        Men sizlarga savol beraman, siz javoblarni topasizlar.
+    </p>
+    <button onclick="backMenu()">Orqaga</button>
 </div>
 
-<!-- Question Screen -->
-<div id="questionScreen" style="display:none;">
+<!-- GAME -->
+<div id="game" style="display:none;">
     <div id="endBtn" onclick="endGame()">O‘yinni tugatish</div>
-    <h1 id="question">Savol yuklanmoqda...</h1>
+    <h2 id="question"></h2>
     <div id="options"></div>
     <p id="result"></p>
     <p id="stats"></p>
 </div>
 
-<audio id="winSound" src="win.mp3"></audio>
-<audio id="failSound" src="fail.mp3"></audio>
-
 <script>
-    let shuffledQuestions = [];
-let questionIndex = 0;
-
-// Savollar massivi
+// ===== SAVOLLAR =====
 const questions = [
-    {q: "O‘zbekiston poytaxti qaysi?", options: ["Samarqand","Toshkent","Buxoro"], answer:1},
-    {q: "Python dasturlash tili qaysi yil yaratilgan?", options:["1991","2000","1985"], answer:0},
-    {q: "HTML nima uchun ishlatiladi?", options:["Web sahifa yaratish","Musika tinglash","Video o‘ynash"], answer:0},
-    {q: "JavaScript qayerda ishlaydi?", options:["Brauzer","Muzey","Kompyuter qotadi"], answer:0},
-    {q: "Yer qaysi sayyoraga tegishli?", options:["Mars","Yer","Jupiter"], answer:1}
+ {q:"O‘zbekiston poytaxti?", options:["Samarqand","Toshkent","Buxoro"], answer:1},
+ {q:"HTML nima?", options:["Til","O‘yin","Brauzer"], answer:0},
+ {q:"JavaScript qayerda ishlaydi?", options:["Telefon","Brauzer","Printer"], answer:1},
+ {q:"2 + 2 nechchi?", options:["3","4","5"], answer:1},
+ {q:"Yer sayyorami?", options:["Ha","Yo‘q","Bilmayman"], answer:0}
 ];
 
-// Statistika
-let total=0, correct=0, wrong=0;
-let currentQuestion;
+// ===== GLOBAL =====
+let shuffled = [];
+let index = 0;
+let total = 0;
+let correct = 0;
+let wrong = 0;
 
-// Tugmalar funksiyalari
-function showInfo() {
-    document.getElementById("startScreen").style.display = "none";
-    document.getElementById("infoText").style.display = "block";
+// ===== SHUFFLE =====
+function shuffle(){
+    shuffled = [...questions];
+    for(let i = shuffled.length-1; i>0; i--){
+        let j = Math.floor(Math.random()*(i+1));
+        [shuffled[i],shuffled[j]] = [shuffled[j],shuffled[i]];
+    }
+    index = 0;
 }
 
-function hideInfo() {
-    document.getElementById("infoText").style.display = "none";
-    document.getElementById("startScreen").style.display = "block";
+// ===== MENU =====
+function showInfo(){
+    document.getElementById("menu").style.display="none";
+    document.getElementById("info").style.display="block";
+}
+function backMenu(){
+    document.getElementById("info").style.display="none";
+    document.getElementById("menu").style.display="block";
 }
 
-function startGame() {
+// ===== START =====
+function startGame(){
     total=0; correct=0; wrong=0;
-    document.getElementById("startScreen").style.display="none";
-    document.getElementById("questionScreen").style.display="block";
-    document.getElementById("stats").innerText="";
+    shuffle();
+    document.getElementById("menu").style.display="none";
+    document.getElementById("game").style.display="block";
     nextQuestion();
 }
 
-// Dinamik savollar
-function nextQuestion() {
-    currentQuestion = questions[Math.floor(Math.random()*questions.length)];
-    document.getElementById("question").innerText = currentQuestion.q;
+// ===== NEXT QUESTION =====
+function nextQuestion(){
+    if(index >= shuffled.length){
+        alert("🎉 Barcha savollar tugadi! Yangi bosqich boshlandi.");
+        shuffle();
+    }
 
-    const optionsDiv = document.getElementById("options");
-    optionsDiv.innerHTML = "";
+    let q = shuffled[index];
+    index++;
 
-    currentQuestion.options.forEach((opt,index)=>{
-        const btn = document.createElement("button");
-        btn.innerText = opt;
-        btn.setAttribute("data-index",index);
-        btn.onclick = checkAnswer;
-        optionsDiv.appendChild(btn);
+    document.getElementById("question").innerText = q.q;
+    const opt = document.getElementById("options");
+    opt.innerHTML = "";
+
+    q.options.forEach((text,i)=>{
+        let b = document.createElement("button");
+        b.innerText = text;
+        b.onclick = ()=>checkAnswer(i,q.answer);
+        opt.appendChild(b);
     });
-
-    document.getElementById("result").innerText="";
-    document.body.style.background = "linear-gradient(135deg, #0f2027, #203a43, #2c5364)";
 }
 
-// Javobni tekshirish
-function checkAnswer(e){
-    const index = Number(e.target.getAttribute("data-index"));
+// ===== CHECK =====
+function checkAnswer(choice,answer){
     total++;
-    if(index===currentQuestion.answer){
-        document.getElementById("result").innerText="🎉 To‘g‘ri javob!";
-        document.getElementById("winSound").play();
-        document.body.style.background="linear-gradient(135deg,#11998e,#38ef7d)";
+    if(choice === answer){
         correct++;
-    } else{
-        document.getElementById("result").innerText=`❌ Xato. To‘g‘ri javob: ${currentQuestion.options[currentQuestion.answer]}`;
-        document.getElementById("failSound").play();
-        document.body.style.background="linear-gradient(135deg,#f00000,#dc281e)";
+        document.getElementById("result").innerText="✅ To‘g‘ri!";
+    }else{
         wrong++;
+        document.getElementById("result").innerText="❌ Xato!";
     }
-    document.getElementById("stats").innerText=`Savollar: ${total} | To‘g‘ri: ${correct} | Xato: ${wrong} | Foiz: ${((correct/total)*100).toFixed(1)}%`;
-    setTimeout(nextQuestion,2000);
+
+    document.getElementById("stats").innerText =
+    `Savol: ${total} | To‘g‘ri: ${correct} | Xato: ${wrong} | Foiz: ${Math.round(correct/total*100)}%`;
+
+    setTimeout(nextQuestion,1000);
 }
 
-// O‘yinni tugatish
+// ===== END =====
 function endGame(){
-    alert(`O‘yin tugadi!\nJami savollar: ${total}\nTo‘g‘ri javoblar: ${correct}\nXato javoblar: ${wrong}\nFoiz: ${((correct/total)*100).toFixed(1)}%`);
-    document.getElementById("questionScreen").style.display="none";
-    document.getElementById("startScreen").style.display="block";
-}
-function shuffleQuestions() {
-    shuffledQuestions = [...questions];
-    for (let i = shuffledQuestions.length - 1; i > 0; i--) {
-        let j = Math.floor(Math.random() * (i + 1));
-        [shuffledQuestions[i], shuffledQuestions[j]] =
-        [shuffledQuestions[j], shuffledQuestions[i]];
-    }
-    questionIndex = 0;
-}
+    alert(`Natija:
+Savollar: ${total}
+To‘g‘ri: ${correct}
+Xato: ${wrong}
+Foiz: ${Math.round(correct/total*100)}%`);
 
+    document.getElementById("game").style.display="none";
+    document.getElementById("menu").style.display="block";
+}
 </script>
-
-let currentQuestion;
-let lastQuestionIndex = -1;
-function nextQuestion() {
-
-    if (questionIndex >= shuffledQuestions.length) {
-        alert("🎉 Yangi bosqich boshlandi!");
-        shuffleQuestions();
-    }
-
-    currentQuestion = shuffledQuestions[questionIndex];
-    questionIndex++;
-
-    document.getElementById("question").innerText = currentQuestion.q;
-
-    const optionsDiv = document.getElementById("options");
-    optionsDiv.innerHTML = "";
-
-    currentQuestion.options.forEach((opt, index) => {
-        const btn = document.createElement("button");
-        btn.innerText = opt;
-        btn.setAttribute("data-index", index);
-        btn.onclick = checkAnswer;
-        optionsDiv.appendChild(btn);
-    });
-
-    document.getElementById("result").innerText = "";
-    document.body.style.background =
-        "linear-gradient(135deg, #0f2027, #203a43, #2c5364)";
-}
-
 
 </body>
 </html>
