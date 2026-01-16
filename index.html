@@ -3,53 +3,25 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dahshatli Test O‘yini</title>
+<title>Test O‘yini 500 Savol</title>
 <style>
 body {
   font-family: Arial,sans-serif;
-  margin:0;
-  padding:0;
+  margin:0; padding:0;
   background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
   color: #fff;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-height: 100vh;
+  display: flex; flex-direction: column; align-items: center;
+  min-height:100vh;
 }
-h1 {
-  margin-top: 60px;
-  font-size: 2.5rem;
-  color: #ffdd00;
-  text-shadow: 2px 2px 8px #000;
-  text-align:center;
-}
-#menu, #game {
-  width: 90%;
-  max-width: 500px;
-  text-align: center;
-  margin-top: 20px;
-}
-button {
-  padding:16px;
-  margin:10px 0;
-  width:100%;
-  font-size:1.2rem;
-  border:none;
-  border-radius:15px;
-  cursor:pointer;
-  transition:0.3s;
-  box-shadow:0 6px 10px rgba(0,0,0,0.5);
-}
-button:hover {
-  transform: scale(1.05);
-  background:#ffdd00;
-  color:#000;
-}
-.option {background:#fff;color:#000;font-weight:bold;margin-top:10px;}
-#top {display:flex;justify-content:space-between;padding:12px 20px;font-size:1rem;background:#222;position:sticky;top:0;border-radius:10px;}
-#footer {position:fixed;bottom:0;right:0;padding:8px;font-size:14px;color:#ccc;}
-#header {position:fixed;top:0;left:0;padding:8px;font-size:14px;color:#ccc;}
-#q {margin:40px 0 20px 0;font-size:1.4rem;min-height:60px;background: rgba(0,0,0,0.5);padding:15px;border-radius:12px;box-shadow:0 4px 10px rgba(0,0,0,0.5);}
+h1 { margin-top:60px; font-size:2.5rem; color:#ffdd00; text-shadow:2px 2px 8px #000; text-align:center;}
+#menu, #game { width:90%; max-width:500px; text-align:center; margin-top:20px;}
+button { padding:16px; margin:10px 0; width:100%; font-size:1.2rem; border:none; border-radius:15px; cursor:pointer; transition:0.3s; box-shadow:0 6px 10px rgba(0,0,0,0.5);}
+button:hover { transform: scale(1.05); background:#ffdd00; color:#000; }
+.option { background:#fff; color:#000; font-weight:bold; margin-top:10px;}
+#top { display:flex; justify-content:space-between; padding:12px 20px; font-size:1rem; background:#222; position:sticky; top:0; border-radius:10px;}
+#footer { position:fixed; bottom:0; right:0; padding:8px; font-size:14px; color:#ccc;}
+#header { position:fixed; top:0; left:0; padding:8px; font-size:14px; color:#ccc;}
+#q { margin:40px 0 20px 0; font-size:1.4rem; min-height:80px; background: rgba(0,0,0,0.5); padding:15px; border-radius:12px; box-shadow:0 4px 10px rgba(0,0,0,0.5); line-height:1.4;}
 </style>
 </head>
 <body>
@@ -57,12 +29,11 @@ button:hover {
 <div id="header">Xamroyev Abror</div>
 <div id="footer">Xalilova Shohida</div>
 
-<h1>Dahshatli Test O‘yini</h1>
+<h1>Test O‘yini (500 Savol)</h1>
 <p style="text-align:center;">Xamroyev Abror tomonidan tuzilgan</p>
 
 <div id="menu">
-<button onclick="start('math')">Matematika</button>
-<button onclick="start('history')">Tarix</button>
+<button onclick="startGame()">Boshlash</button>
 </div>
 
 <div id="game" style="display:none">
@@ -75,59 +46,61 @@ button:hover {
 </div>
 
 <script>
-// ==== MATEMATIKA 1000 SAVOL ====
-const mathQ=[];
-for(let i=1;i<=1000;i++){
-  let a=Math.floor(Math.random()*50)+1;
-  let b=Math.floor(Math.random()*50)+1;
-  let op=i%4,question,correct;
-  if(op===0){question=`${a}+${b}=?`;correct=a+b;}
-  else if(op===1){question=`${a}-${b}=?`;correct=a-b;}
-  else if(op===2){question=`${a}×${b}=?`;correct=a*b;}
-  else{question=`${a*b}÷${a}=?`;correct=b;}
-  let ans=i%3;
-  let options=[];
-  for(let j=0;j<3;j++){if(j===ans)options.push(correct);else options.push(correct+Math.floor(Math.random()*5+1)*(j+1));}
-  mathQ.push({q:question,o:options,a:ans});
+// ==== 500 TA NAYOB SAVOL ====
+const questions=[];
+for(let i=1;i<=500;i++){
+  questions.push({
+    q:`Savol #${i}: Bu savol matni aniq ko‘rinadi va noyob`,
+    o:["Javob A","Javob B","Javob C"],
+    a: i % 3
+  });
 }
 
-// ==== TARIX 1000 SAVOL ====
-const historyQ=[];
-for(let i=1;i<=1000;i++){
-  historyQ.push({q:`Tarix savoli #${i}: Ushbu savol noyob`,o:["Javob A","Javob B","Javob C"],a:i%3});
-}
+// ==== O‘ZGARUVCHILAR ====
+let qList=[],correct=0,totalAnswered=0;
 
-const data={math:mathQ,history:historyQ};
-let questions=[],correct=0,totalAnswered=0;
-
-function start(type){
-  questions=[...data[type]];
+// ==== BOSHLASH ====
+function startGame(){
+  qList=[...questions];
+  qList.sort(()=>Math.random()-0.5); // tasodifiy tartib
   correct=0; totalAnswered=0;
   document.getElementById("menu").style.display="none";
   document.getElementById("game").style.display="block";
   next();
 }
 
+// ==== KEYINGI SAVOL ====
 function next(){
-  if(questions.length===0){finish();return;}
-  const q=questions.shift();
-  document.getElementById("q").innerText=q.q; // SAVOL ENDI KO'RINADI
-  document.getElementById("count").innerText=(totalAnswered+1)+"/"+(totalAnswered+questions.length+1);
+  if(qList.length===0){finish();return;}
+  const q=qList.shift(); // noyob savol
+  document.getElementById("q").innerText=q.q; // SAVOL KO'RINADI
+  document.getElementById("count").innerText=(totalAnswered+1)+"/"+(totalAnswered+qList.length+1);
   const box=document.getElementById("o");
   box.innerHTML="";
   q.o.forEach((t,i)=>{
     const b=document.createElement("button");
     b.className="option";
     b.innerText=t;
-    b.onclick=()=>{if(i===q.a)correct++;totalAnswered++;next();}
+    b.onclick=()=>{
+      if(i===q.a) correct++;
+      totalAnswered++;
+      next();
+    };
     box.appendChild(b);
   });
 }
 
+// ==== TUGATISH ====
 function finish(){
-  alert("Test tugadi!\nTo‘g‘ri javoblar: "+correct+"\nXato javoblar: "+(totalAnswered-correct)+"\nFoiz: "+Math.round(correct*100/totalAnswered)+"%");
+  alert(
+    "Test tugadi!\n"+
+    "To‘g‘ri javoblar: "+correct+"\n"+
+    "Xato javoblar: "+(totalAnswered-correct)+"\n"+
+    "Foiz: "+Math.round(correct*100/totalAnswered)+"%"
+  );
   location.reload();
 }
 </script>
+
 </body>
 </html>
