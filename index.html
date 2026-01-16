@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Test O‘yini 500 Savol</title>
+<title>Test O‘yini - Matematika & Geografiya</title>
 <style>
 body {
   font-family: Arial,sans-serif;
   margin:0; padding:0;
   background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
   color: #fff;
-  display: flex; flex-direction: column; align-items: center;
+  display:flex; flex-direction:column; align-items:center;
   min-height:100vh;
 }
 h1 { margin-top:60px; font-size:2.5rem; color:#ffdd00; text-shadow:2px 2px 8px #000; text-align:center;}
@@ -29,11 +29,12 @@ button:hover { transform: scale(1.05); background:#ffdd00; color:#000; }
 <div id="header">Xamroyev Abror</div>
 <div id="footer">Xalilova Shohida</div>
 
-<h1>Test O‘yini (500 Savol)</h1>
-<p style="text-align:center;">Xamroyev Abror tomonidan tuzilgan</p>
+<h1>Test O‘yini</h1>
+<p style="text-align:center;">Matematika & Geografiya (500 savol har biri)</p>
 
 <div id="menu">
-<button onclick="startGame()">Boshlash</button>
+<button onclick="startGame('math')">Matematika</button>
+<button onclick="startGame('geo')">Geografiya</button>
 </div>
 
 <div id="game" style="display:none">
@@ -46,35 +47,51 @@ button:hover { transform: scale(1.05); background:#ffdd00; color:#000; }
 </div>
 
 <script>
-// ==== 500 TA NAYOB SAVOL ====
-const questions=[];
+// ==== 500 TA MATEMATIKA SAVOL ====
+const mathQ=[];
 for(let i=1;i<=500;i++){
-  questions.push({
-    q:`Savol #${i}: Bu savol matni aniq ko‘rinadi va noyob`,
+  let a=Math.floor(Math.random()*50)+1;
+  let b=Math.floor(Math.random()*50)+1;
+  let op=i%4,question,correct;
+  if(op===0){question=`${a}+${b}=?`;correct=a+b;}
+  else if(op===1){question=`${a}-${b}=?`;correct=a-b;}
+  else if(op===2){question=`${a}×${b}=?`;correct=a*b;}
+  else{question=`${a*b}÷${a}=?`;correct=b;}
+  let ans=i%3;
+  let options=[];
+  for(let j=0;j<3;j++){if(j===ans) options.push(correct); else options.push(correct+Math.floor(Math.random()*5+1)*(j+1));}
+  mathQ.push({q:question,o:options,a:ans});
+}
+
+// ==== 500 TA GEOGRAFIYA SAVOL ====
+const geoQ=[];
+for(let i=1;i<=500;i++){
+  geoQ.push({
+    q:`Geografiya savoli #${i}: Bu savol noyob`,
     o:["Javob A","Javob B","Javob C"],
-    a: i % 3
+    a:i%3
   });
 }
 
-// ==== O‘ZGARUVCHILAR ====
-let qList=[],correct=0,totalAnswered=0;
+// ==== BO‘LIMLAR DATA ====
+const data={math:mathQ,geo:geoQ};
 
-// ==== BOSHLASH ====
-function startGame(){
-  qList=[...questions];
-  qList.sort(()=>Math.random()-0.5); // tasodifiy tartib
+let questions=[],correct=0,totalAnswered=0;
+
+function startGame(type){
+  questions=[...data[type]];
+  questions.sort(()=>Math.random()-0.5); // tasodifiy tartib
   correct=0; totalAnswered=0;
   document.getElementById("menu").style.display="none";
   document.getElementById("game").style.display="block";
   next();
 }
 
-// ==== KEYINGI SAVOL ====
 function next(){
-  if(qList.length===0){finish();return;}
-  const q=qList.shift(); // noyob savol
-  document.getElementById("q").innerText=q.q; // SAVOL KO'RINADI
-  document.getElementById("count").innerText=(totalAnswered+1)+"/"+(totalAnswered+qList.length+1);
+  if(questions.length===0){finish();return;}
+  const q=questions.shift();
+  document.getElementById("q").innerText=q.q;
+  document.getElementById("count").innerText=(totalAnswered+1)+"/"+(totalAnswered+questions.length+1);
   const box=document.getElementById("o");
   box.innerHTML="";
   q.o.forEach((t,i)=>{
@@ -90,7 +107,6 @@ function next(){
   });
 }
 
-// ==== TUGATISH ====
 function finish(){
   alert(
     "Test tugadi!\n"+
