@@ -2,161 +2,174 @@
 <html lang="uz">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bilimlar O‘yini</title>
-
+<title>Abror Quiz Game</title>
 <style>
 body{
     margin:0;
-    font-family:Arial, sans-serif;
+    font-family:Arial;
     background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
     color:white;
     text-align:center;
 }
-button{
-    padding:15px;
-    margin:10px;
-    font-size:16px;
-    border:none;
-    border-radius:14px;
-    cursor:pointer;
-    background:linear-gradient(135deg,#00ff99,#00ccff);
-    font-weight:bold;
+.container{
+    max-width:600px;
+    margin:auto;
+    padding:20px;
 }
-button:hover{transform:scale(1.05);}
-#top{
+button{
+    padding:12px 20px;
+    margin:10px;
+    font-size:18px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    background:#00c6ff;
+    color:black;
+}
+button:hover{background:#00f2fe}
+.option{
+    display:block;
+    width:100%;
+}
+.top{
     display:flex;
     justify-content:space-between;
-    padding:10px;
+    align-items:center;
 }
-.box{
-    background:rgba(255,255,255,0.15);
-    padding:8px 12px;
-    border-radius:10px;
-}
-.hidden{display:none;}
+.hidden{display:none}
 </style>
 </head>
 
 <body>
 
-<div id="top">
-    <div class="box">Xamroyev Abror</div>
-    <div class="box" onclick="backMenu()">⬅ Menyu</div>
+<div class="container">
+
+<div class="top hidden" id="topBar">
+    <div id="score">0/0</div>
+    <button onclick="finishGame()">❌ Tugatish</button>
 </div>
 
-<!-- START -->
-<div id="start">
-    <h1>🎓 Bilimlar O‘yini</h1>
-    <button onclick="openCategories()">Boshlash</button>
+<!-- MENU -->
+<div id="menu">
+    <h1>🎮 Quiz Game</h1>
+    <button onclick="showCategories()">▶ Boshlash</button>
+    <button onclick="showInfo()">ℹ Ma'lumot</button>
 </div>
 
-<!-- CATEGORIES -->
-<div id="categories" class="hidden">
-    <h2>📚 Bo‘limni tanlang</h2>
-    <button onclick="startGame('math')">➕ Matematika</button>
-    <button onclick="startGame('history')">📜 Tarix</button>
-    <button onclick="startGame('psy')">🧠 Psixologiya</button>
-    <button onclick="startGame('lang')">📖 Ona tili & Adabiyot</button>
+<!-- INFO -->
+<div id="info" class="hidden">
+    <h2>Ma'lumot</h2>
+    <p>
+    Bu o‘yin Xamroyev Abror tomonidan tuzilgan.  
+    O‘yin sizga turli fanlardan savollar beradi.  
+    To‘g‘ri javob topishga harakat qiling!
+    </p>
+    <button onclick="backMenu()">⬅ Orqaga</button>
+</div>
+
+<!-- CATEGORY -->
+<div id="category" class="hidden">
+    <h2>Bo‘limni tanlang</h2>
+    <button onclick="startGame(mathQ)">📐 Matematika</button>
+    <button onclick="startGame(historyQ)">📜 Tarix</button>
+    <button onclick="startGame(psyQ)">🧠 Psixologiya</button>
+    <button onclick="startGame(langQ)">📚 Ona tili</button>
 </div>
 
 <!-- GAME -->
 <div id="game" class="hidden">
     <h2 id="question"></h2>
     <div id="options"></div>
-    <p id="stats"></p>
+</div>
+
 </div>
 
 <script>
-let total=0, correct=0, wrong=0;
-let currentType="";
+// ===== SAVOLLAR =====
+const mathQ = [
+ {q:"8×7=?", options:["54","56","64"], a:1},
+ {q:"144 ning ildizi?", options:["10","11","12"], a:2},
+ {q:"3² + 4² = ?", options:["25","14","21"], a:0}
+];
 
-// ===== MENU =====
-function openCategories(){
-    document.getElementById("start").classList.add("hidden");
-    document.getElementById("categories").classList.remove("hidden");
-}
-function backMenu(){
-    document.getElementById("game").classList.add("hidden");
-    document.getElementById("categories").classList.remove("hidden");
+const historyQ = [
+ {q:"Amir Temur qachon tug‘ilgan?", options:["1336","1405","1299"], a:0},
+ {q:"O‘zbekiston qachon mustaqil bo‘lgan?", options:["1991","1989","1993"], a:0},
+ {q:"Buyuk Ipak yo‘li nima?", options:["Yo‘l","Savdo yo‘li","Daryo"], a:1}
+];
+
+const psyQ = [
+ {q:"Mantiq nimaga asoslanadi?", options:["Hissiyot","Fikr","Tasodif"], a:1},
+ {q:"Stress nima?", options:["Kasallik","Bosim","Uyqu"], a:1},
+ {q:"Xotira qaysi jarayon?", options:["Psixik","Jismoniy","Mexanik"], a:0}
+];
+
+const langQ = [
+ {q:"Ot so‘z turkumi?", options:["Narsa","Harakat","Belgi"], a:0},
+ {q:"Sifat nimani bildiradi?", options:["Harakat","Belgi","Son"], a:1},
+ {q:"Gapning oxiri?", options:[",",".",";"], a:1}
+];
+
+// ===== O‘YIN LOGIKASI =====
+let questions=[], index=0, correct=0, total=0;
+
+function shuffle(arr){
+    return arr.sort(()=>Math.random()-0.5);
 }
 
-// ===== START GAME =====
-function startGame(type){
-    currentType = type;
-    total=0; correct=0; wrong=0;
-    document.getElementById("categories").classList.add("hidden");
+function startGame(q){
+    questions=[...q];
+    shuffle(questions);
+    index=0; correct=0; total=0;
+    document.getElementById("menu").classList.add("hidden");
+    document.getElementById("category").classList.add("hidden");
+    document.getElementById("topBar").classList.remove("hidden");
     document.getElementById("game").classList.remove("hidden");
     nextQuestion();
 }
 
-// ===== QUESTION GENERATORS =====
-function mathQuestion(){
-    let a=Math.floor(Math.random()*50)+10;
-    let b=Math.floor(Math.random()*50)+10;
-    let ans=a*b;
-    let opts=[ans, ans+5, ans-5].sort(()=>Math.random()-0.5);
-    return {q:`${a} × ${b} = ?`, options:opts, answer:opts.indexOf(ans)};
-}
-
-const historyQ=[
- {q:"Amir Temur qaysi yilda tug‘ilgan?",options:["1336","1405","1501"],answer:0},
- {q:"O‘zbekiston qachon mustaqil bo‘lgan?",options:["1991","1989","1995"],answer:0}
-];
-
-function historyQuestion(){
-    let q=historyQ[Math.floor(Math.random()*historyQ.length)];
-    return q;
-}
-
-function psyQuestion(){
-    let q=[
-        "Qaysi biri mantiqan to‘g‘ri?",
-        "Inson qaror qabul qilishda nimaga tayanadi?"
-    ];
-    let opts=[
-        ["Hissiyot","Tasodif","Fikr"],["Mantiq","Uyqu","Shovqin"]
-    ];
-    let i=Math.floor(Math.random()*2);
-    return {q:q[i], options:opts[i], answer:0};
-}
-
-const langQ=[
- {q:"Ot so‘z turkumimi?",options:["Ha","Yo‘q","Ba’zan"],answer:0},
- {q:"Alisher Navoiy qaysi asrda yashagan?",options:["XV","XVII","XIX"],answer:0}
-];
-
-function langQuestion(){
-    return langQ[Math.floor(Math.random()*langQ.length)];
-}
-
-// ===== NEXT =====
 function nextQuestion(){
-    let q;
-    if(currentType==="math") q=mathQuestion();
-    if(currentType==="history") q=historyQuestion();
-    if(currentType==="psy") q=psyQuestion();
-    if(currentType==="lang") q=langQuestion();
-
+    if(index>=questions.length){
+        shuffle(questions);
+        index=0;
+    }
+    const q=questions[index++];
     document.getElementById("question").innerText=q.q;
-    let opt=document.getElementById("options");
+    const opt=document.getElementById("options");
     opt.innerHTML="";
-
-    q.options.forEach((t,i)=>{
-        let b=document.createElement("button");
-        b.innerText=t;
-        b.onclick=()=>check(i,q.answer);
+    q.options.forEach((o,i)=>{
+        const b=document.createElement("button");
+        b.className="option";
+        b.innerText=o;
+        b.onclick=()=>check(i,q.a);
         opt.appendChild(b);
     });
 }
 
-// ===== CHECK =====
-function check(c,a){
+function check(i,a){
     total++;
-    if(c===a) correct++; else wrong++;
-    document.getElementById("stats").innerText=
-    `Savol: ${total} | To‘g‘ri: ${correct} | Xato: ${wrong} | Foiz: ${Math.round(correct/total*100)}%`;
-    setTimeout(nextQuestion,700);
+    if(i===a) correct++;
+    document.getElementById("score").innerText=`${correct}/${total}`;
+    nextQuestion();
+}
+
+function finishGame(){
+    alert(`Natija: ${correct}/${total} (${Math.round(correct*100/total)}%)`);
+    location.reload();
+}
+
+// ===== MENU =====
+function showCategories(){
+    document.getElementById("menu").classList.add("hidden");
+    document.getElementById("category").classList.remove("hidden");
+}
+function showInfo(){
+    document.getElementById("menu").classList.add("hidden");
+    document.getElementById("info").classList.remove("hidden");
+}
+function backMenu(){
+    document.getElementById("info").classList.add("hidden");
+    document.getElementById("menu").classList.remove("hidden");
 }
 </script>
 
