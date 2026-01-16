@@ -125,6 +125,9 @@
 <audio id="failSound" src="fail.mp3"></audio>
 
 <script>
+    let shuffledQuestions = [];
+let questionIndex = 0;
+
 // Savollar massivi
 const questions = [
     {q: "O‘zbekiston poytaxti qaysi?", options: ["Samarqand","Toshkent","Buxoro"], answer:1},
@@ -202,18 +205,29 @@ function endGame(){
     document.getElementById("questionScreen").style.display="none";
     document.getElementById("startScreen").style.display="block";
 }
+function shuffleQuestions() {
+    shuffledQuestions = [...questions];
+    for (let i = shuffledQuestions.length - 1; i > 0; i--) {
+        let j = Math.floor(Math.random() * (i + 1));
+        [shuffledQuestions[i], shuffledQuestions[j]] =
+        [shuffledQuestions[j], shuffledQuestions[i]];
+    }
+    questionIndex = 0;
+}
+
 </script>
+
 let currentQuestion;
 let lastQuestionIndex = -1;
 function nextQuestion() {
-    let randomIndex;
 
-    do {
-        randomIndex = Math.floor(Math.random() * questions.length);
-    } while (randomIndex === lastQuestionIndex);
+    if (questionIndex >= shuffledQuestions.length) {
+        alert("🎉 Yangi bosqich boshlandi!");
+        shuffleQuestions();
+    }
 
-    lastQuestionIndex = randomIndex;
-    currentQuestion = questions[randomIndex];
+    currentQuestion = shuffledQuestions[questionIndex];
+    questionIndex++;
 
     document.getElementById("question").innerText = currentQuestion.q;
 
@@ -232,6 +246,7 @@ function nextQuestion() {
     document.body.style.background =
         "linear-gradient(135deg, #0f2027, #203a43, #2c5364)";
 }
+
 
 </body>
 </html>
