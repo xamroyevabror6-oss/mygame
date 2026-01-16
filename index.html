@@ -40,7 +40,7 @@ button:hover { transform: scale(1.05); background:#ffdd00; color:#000; }
 </div>
 
 <script>
-// ==== 100 TA MATEMATIKA SAVOL ====
+// ==== 100 TA MATEMATIKA SAVOL (son javoblari) ====
 const mathQ=[];
 for(let i=1;i<=100;i++){
   let a=Math.floor(Math.random()*50)+1;
@@ -52,17 +52,17 @@ for(let i=1;i<=100;i++){
     case 2: question=`${a} × ${b} = ?`; correctText=(a*b).toString(); break;
     case 3: question=`${a*b} ÷ ${a} = ?`; correctText=b.toString(); break;
   }
-  // 3 ta javob matni
+  // 3 ta javob son matni
   let ans=i%3;
   let options=[];
   for(let j=0;j<3;j++){
     if(j===ans) options.push(correctText);
-    else options.push("Variant " + String(j+1));
+    else options.push((Math.floor(Math.random()*100)+1).toString());
   }
   mathQ.push({q:question,o:options,a:ans});
 }
 
-// ==== 100 TA GEOGRAFIYA SAVOL ====
+// ==== 100 TA GEOGRAFIYA SAVOL (matn javoblari) ====
 const geoQ=[];
 const geoQuestionsList = [
   {q:"O‘zbekiston poytaxti qayer?", o:["Toshkent","Samarqand","Buxoro"], a:0},
@@ -78,10 +78,7 @@ const geoQuestionsList = [
 ];
 for(let i=0;i<100;i++){
   let base=geoQuestionsList[i % geoQuestionsList.length];
-  // 3 ta javob matni
-  let options=[...base.o];
-  let correctIndex=base.a;
-  geoQ.push({q:base.q + ` (#${i+1})`, o:options, a:correctIndex});
+  geoQ.push({q:base.q + ` (#${i+1})`, o:base.o, a:base.a});
 }
 
 // ==== BO‘LIMLAR DATA ====
@@ -91,7 +88,6 @@ let questions=[],correct=0,totalAnswered=0;
 function startGame(type){
   questions=[...data[type]];
   questions.sort(()=>Math.random()-0.5); // aralashadi
-  questions = questions.slice(0,100); // faqat 100 savol
   correct=0; totalAnswered=0;
   document.getElementById("menu").style.display="none";
   document.getElementById("game").style.display="block";
