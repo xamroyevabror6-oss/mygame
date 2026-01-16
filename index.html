@@ -2,93 +2,136 @@
 <html lang="uz">
 <head>
 <meta charset="UTF-8">
-<title>Abror Quiz Game</title>
+<title>8–11 sinf Quiz | Abror</title>
 <style>
 body{
-  margin:0;font-family:Arial;
-  background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
-  color:white;text-align:center;
+  margin:0;
+  font-family:Arial;
+  background:linear-gradient(135deg,#141e30,#243b55);
+  color:white;
+  text-align:center;
 }
-.container{max-width:600px;margin:auto;padding:20px}
+.container{
+  max-width:700px;
+  margin:auto;
+  padding:20px;
+}
 button{
-  width:100%;padding:14px;margin:8px 0;font-size:18px;border:none;border-radius:10px;background:#00c6ff;cursor:pointer;
+  width:100%;
+  padding:14px;
+  margin:8px 0;
+  font-size:18px;
+  border:none;
+  border-radius:10px;
+  background:#00c6ff;
+  cursor:pointer;
 }
 button:hover{background:#00f2fe}
 .hidden{display:none}
-.top{display:flex;justify-content:space-between;margin-bottom:10px;}
+.top{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:10px;
+}
 </style>
 </head>
-<body>
 
+<body>
 <div class="container">
 
+<!-- MENU -->
 <div id="menu">
-  <h1>🎮 Bilimlar O‘yini</h1>
+  <h1>🎓 8–11 sinf Quiz</h1>
   <button onclick="start('math')">📐 Matematika</button>
   <button onclick="start('history')">📜 Tarix</button>
   <button onclick="start('psy')">🧠 Psixologiya</button>
   <button onclick="start('lang')">📚 Ona tili</button>
 </div>
 
+<!-- GAME -->
 <div id="game" class="hidden">
   <div class="top">
-    <div id="score">0/0</div>
+    <div id="score">0 / 0</div>
     <button onclick="finish()">❌ Tugatish</button>
   </div>
-  <h2 id="question"></h2>
+  <h2 id="question">Savol</h2>
   <div id="options"></div>
 </div>
 
 </div>
 
 <script>
-// ===== HAR FANDA 200 TA SAVOL (NAMUNA) =====
-// Matematika: 1–200
+// ===================
+// SAVOLLAR (8–11 SINF)
+// ===================
+
+// MATEMATIKA
 const mathQ = [];
 for(let i=1;i<=200;i++){
-  const a=i%50+1;
-  const b=(i*3)%50+1;
-  const correct=a+b;
+  let a=i%20+5;
+  let b=(i*7)%15+3;
+  let correct=a*b;
+  let pos=i%3; // 0=A, 1=B, 2=C
+
+  let opts=[];
+  if(pos===0) opts=[correct, correct+2, correct-1];
+  if(pos===1) opts=[correct-3, correct, correct+1];
+  if(pos===2) opts=[correct+4, correct-2, correct];
+
   mathQ.push({
-    q:`${a} + ${b} = ?`,
-    options:[correct-1,correct,correct+1],
-    a:1
+    q:`${a} × ${b} = ?`,
+    options:opts,
+    a:pos
   });
 }
 
-// Tarix: 1–200
+// TARIX
 const historyQ = [];
 for(let i=1;i<=200;i++){
+  let pos=i%3;
+  let opts=[
+    "1991-yil",
+    "1989-yil",
+    "1993-yil"
+  ];
   historyQ.push({
-    q:`Tarix savol №${i}?`,
-    options:["Variant 1","Variant 2","Variant 3"],
-    a:0
+    q:`O‘zbekiston mustaqillikka erishgan yil qaysi? (savol ${i})`,
+    options:opts,
+    a:pos===0?0:pos===1?1:0
   });
 }
 
-// Psixologiya: 1–200
+// PSIXOLOGIYA
 const psyQ = [];
 for(let i=1;i<=200;i++){
+  let pos=i%3;
+  let opts=["Stress","Xotira","Temperament"];
   psyQ.push({
-    q:`Psixologik savol №${i}?`,
-    options:["Variant A","Variant B","Variant C"],
+    q:`Psixologiyada “stress” nimani anglatadi? (savol ${i})`,
+    options:opts,
     a:0
   });
 }
 
-// Ona tili: 1–200
+// ONA TILI
 const langQ = [];
 for(let i=1;i<=200;i++){
+  let pos=i%3;
+  let opts=["Narsa nomi","Harakat","Belgi"];
   langQ.push({
-    q:`Ona tili savol №${i}?`,
-    options:["Variant X","Variant Y","Variant Z"],
+    q:`Ot so‘z turkumi nimani bildiradi? (savol ${i})`,
+    options:opts,
     a:0
   });
 }
 
-// ===== O‘YIN LOGIKASI =====
-let current=[], idx=0, correct=0, total=0;
-let used = new Set();
+// ===================
+// O‘YIN LOGIKASI
+// ===================
+let current=[];
+let idx=0;
+let correct=0;
+let total=0;
 
 function shuffle(arr){
   for(let i=arr.length-1;i>0;i--){
@@ -98,34 +141,32 @@ function shuffle(arr){
 }
 
 function start(type){
-  used.clear();
   if(type==="math") current=[...mathQ];
   if(type==="history") current=[...historyQ];
   if(type==="psy") current=[...psyQ];
   if(type==="lang") current=[...langQ];
+
   shuffle(current);
-  idx=0; correct=0; total=0;
+  idx=0;
+  correct=0;
+  total=0;
+
   document.getElementById("menu").classList.add("hidden");
   document.getElementById("game").classList.remove("hidden");
+
   nextQ();
 }
 
 function nextQ(){
-  if(used.size >= current.length){
-    alert("Barcha savollar tugadi!\nNatija: "+correct+"/"+total+" ("+Math.round(correct*100/total)+"%)");
+  if(idx>=current.length){
+    alert(`Savollar tugadi!\nNatija: ${correct}/${total} (${Math.round(correct*100/total)}%)`);
     location.reload();
     return;
   }
 
-  let q;
-  let attempts=0;
-  do{
-    q=current[Math.floor(Math.random()*current.length)];
-    attempts++;
-  }while(used.has(q.q) && attempts<1000);
-
-  used.add(q.q);
+  const q=current[idx++];
   document.getElementById("question").innerText=q.q;
+
   const o=document.getElementById("options");
   o.innerHTML="";
   q.options.forEach((x,i)=>{
@@ -137,8 +178,9 @@ function nextQ(){
 }
 
 function check(i,a){
-  total++; if(i===a) correct++;
-  document.getElementById("score").innerText=`${correct}/${total}`;
+  total++;
+  if(i===a) correct++;
+  document.getElementById("score").innerText=`${correct} / ${total}`;
   nextQ();
 }
 
@@ -147,6 +189,5 @@ function finish(){
   location.reload();
 }
 </script>
-
 </body>
 </html>
