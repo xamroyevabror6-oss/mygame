@@ -332,6 +332,80 @@ for(let i=0;i<200;i++){
     a: ans
   });
 }
+const langQ = [];
+
+const langTemplates = [
+  {
+    q: "Ot so‘z turkumi nimani bildiradi?",
+    options: ["Narsa nomi","Harakat","Belgi"],
+    a: 0
+  },
+  {
+    q: "Sifat nimani bildiradi?",
+    options: ["Belgi","Narsa","Harakat"],
+    a: 0
+  },
+  {
+    q: "Fe’l nimani bildiradi?",
+    options: ["Harakat","Belgi","Narsa"],
+    a: 0
+  }
+];
+
+for(let i=0;i<200;i++){
+  let t = langTemplates[i % langTemplates.length];
+  let ans = i % 3;
+
+  let opts = [...t.options];
+  let correct = opts[t.a];
+  opts.splice(t.a,1);
+  opts.splice(ans,0,correct);
+
+  langQ.push({
+    q: t.q,
+    options: opts,
+    a: ans
+  });
+}
+let mathIndex = 0;
+let historyIndex = 0;
+let psyIndex = 0;
+let langIndex = 0;
+shuffle(mathQ);
+shuffle(historyQ);
+shuffle(psyQ);
+shuffle(langQ);
+function nextMathQuestion(){
+  if(mathIndex >= mathQ.length){
+    alert("Matematika savollari tugadi");
+    return;
+  }
+
+  const q = mathQ[mathIndex];
+  mathIndex++;
+
+  showQuestion(q);
+}
+function nextHistoryQuestion(){
+  if(historyIndex >= historyQ.length){
+    alert("Tarix savollari tugadi");
+    return;
+  }
+
+  const q = historyQ[historyIndex];
+  historyIndex++;
+
+  showQuestion(q);
+}
+function showQuestion(q){
+  document.getElementById("question").innerText = q.q;
+
+  document.getElementById("a").innerText = q.options[0];
+  document.getElementById("b").innerText = q.options[1];
+  document.getElementById("c").innerText = q.options[2];
+
+  correctAnswer = q.a;
+}
 
 </body>
 </html>
