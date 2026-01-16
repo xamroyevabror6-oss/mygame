@@ -45,16 +45,19 @@ const mathQ=[];
 for(let i=1;i<=100;i++){
   let a=Math.floor(Math.random()*50)+1;
   let b=Math.floor(Math.random()*50)+1;
-  let op=i%4,question,correct;
-  if(op===0){question=`${a}+${b}=?`;correct=a+b;}
-  else if(op===1){question=`${a}-${b}=?`;correct=a-b;}
-  else if(op===2){question=`${a}×${b}=?`;correct=a*b;}
-  else{question=`${a*b}÷${a}=?`;correct=b;}
+  let question,correctText;
+  switch(i%4){
+    case 0: question=`${a} + ${b} = ?`; correctText=(a+b).toString(); break;
+    case 1: question=`${a} - ${b} = ?`; correctText=(a-b).toString(); break;
+    case 2: question=`${a} × ${b} = ?`; correctText=(a*b).toString(); break;
+    case 3: question=`${a*b} ÷ ${a} = ?`; correctText=b.toString(); break;
+  }
+  // 3 ta javob matni
   let ans=i%3;
   let options=[];
   for(let j=0;j<3;j++){
-    if(j===ans) options.push(correct.toString());
-    else options.push((correct+Math.floor(Math.random()*5+1)*(j+1)).toString());
+    if(j===ans) options.push(correctText);
+    else options.push("Variant " + String(j+1));
   }
   mathQ.push({q:question,o:options,a:ans});
 }
@@ -62,26 +65,23 @@ for(let i=1;i<=100;i++){
 // ==== 100 TA GEOGRAFIYA SAVOL ====
 const geoQ=[];
 const geoQuestionsList = [
-  "O‘zbekiston poytaxti qayer?",
-  "Amazon daryosi qaysi qit’ada joylashgan?",
-  "Sahara cho‘li qaysi qit’ada?",
-  "Evropa va Osiyo o‘rtasidagi tog‘lar?",
-  "Nyu-York qaysi davlatda joylashgan?",
-  "Nil daryosi qaysi qit’ada?",
-  "Mount Everest qayerda joylashgan?",
-  "Qaysi dengiz Tuzli dengiz bilan chegaradosh?",
-  "Qaysi okean eng katta?",
-  "Kanada poytaxti qayer?"
+  {q:"O‘zbekiston poytaxti qayer?", o:["Toshkent","Samarqand","Buxoro"], a:0},
+  {q:"Amazon daryosi qaysi qit’ada?", o:["Afrika","Janubiy Amerika","Osiyo"], a:1},
+  {q:"Sahara cho‘li qaysi qit’ada?", o:["Afrika","Osiyo","Avstraliya"], a:0},
+  {q:"Evropa va Osiyo o‘rtasidagi tog‘lar?", o:["Alpom Tog‘lari","Ural Tog‘lari","Himalay"], a:1},
+  {q:"Nyu-York qaysi davlatda?", o:["AQSh","Kanada","Braziliya"], a:0},
+  {q:"Nil daryosi qaysi qit’ada?", o:["Afrika","Evropa","Osiyo"], a:0},
+  {q:"Mount Everest qayerda?", o:["Nepal","Hindiston","Pokiston"], a:0},
+  {q:"Qaysi dengiz Tuzli dengiz bilan chegaradosh?", o:["Qora","Oq","Sariq"], a:0},
+  {q:"Qaysi okean eng katta?", o:["Tinch","Atlantik","Hind"], a:0},
+  {q:"Kanada poytaxti qayer?", o:["Ottava","Toronto","Vankuver"], a:0}
 ];
 for(let i=0;i<100;i++){
-  let qText = geoQuestionsList[i % geoQuestionsList.length] + ` (#${i+1})`;
-  let correctIndex = i%3;
-  let options = [];
-  for(let j=0;j<3;j++){
-    if(j===correctIndex) options.push(["Toshkent","Samarqand","Buxoro","Janubiy Amerika","Afrika","Osiyo","Ural Tog‘lari","Alpom Tog‘lari","Nepal","Hindiston"][i%10]);
-    else options.push(["Variant1","Variant2","Variant3"][j]);
-  }
-  geoQ.push({q:qText,o:options,a:correctIndex});
+  let base=geoQuestionsList[i % geoQuestionsList.length];
+  // 3 ta javob matni
+  let options=[...base.o];
+  let correctIndex=base.a;
+  geoQ.push({q:base.q + ` (#${i+1})`, o:options, a:correctIndex});
 }
 
 // ==== BO‘LIMLAR DATA ====
@@ -90,7 +90,8 @@ let questions=[],correct=0,totalAnswered=0;
 
 function startGame(type){
   questions=[...data[type]];
-  questions.sort(()=>Math.random()-0.5); // tasodifiy tartib
+  questions.sort(()=>Math.random()-0.5); // aralashadi
+  questions = questions.slice(0,100); // faqat 100 savol
   correct=0; totalAnswered=0;
   document.getElementById("menu").style.display="none";
   document.getElementById("game").style.display="block";
@@ -122,7 +123,7 @@ function finish(){
     "Test tugadi!\n"+
     "To‘g‘ri javoblar: "+correct+"\n"+
     "Xato javoblar: "+(100-correct)+"\n"+
-    "Foiz: "+Math.round(correct*100/100)+"%"
+    "Foiz: "+Math.round(correct)+"%"
   );
   location.reload();
 }
