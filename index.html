@@ -3,22 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Oddiy Test</title>
-
+<title>Test o‘yini</title>
 <style>
-body{font-family:Arial;text-align:center;background:#222;color:#fff}
-button{padding:10px;margin:5px;width:90%;max-width:300px}
-#game{margin-top:20px}
+body{font-family:Arial;text-align:center;background:#1e1e1e;color:#fff}
+button{padding:12px;margin:6px;width:90%;max-width:320px}
 </style>
 </head>
-
 <body>
 
 <h1>Test o‘yini</h1>
 <p>Xamroyev Abror tomonidan tuzilgan</p>
 
 <div id="menu">
-<button onclick="start()">Boshlash</button>
+<button onclick="start('math')">Matematika</button>
+<button onclick="start('history')">Tarix</button>
 </div>
 
 <div id="game" style="display:none">
@@ -27,39 +25,54 @@ button{padding:10px;margin:5px;width:90%;max-width:300px}
 </div>
 
 <script>
-let questions = [
- {q:"2+2=?", o:["3","4","5"], a:1},
- {q:"5×3=?", o:["15","10","20"], a:0},
- {q:"9−4=?", o:["3","5","6"], a:1},
- {q:"√16=?", o:["3","4","5"], a:1},
- {q:"10÷2=?", o:["2","5","10"], a:1}
-];
+// ===== SAVOLLAR =====
+const data = {
+ math: [
+  {q:"2+3=?", o:["4","5","6"], a:1},
+  {q:"6×2=?", o:["12","8","10"], a:0},
+  {q:"9−4=?", o:["3","5","6"], a:1},
+  {q:"√25=?", o:["4","5","6"], a:1}
+ ],
+ history: [
+  {q:"Amir Temur qachon tug‘ilgan?", o:["1336","1405","1220"], a:0},
+  {q:"Ikkinchi jahon urushi qachon tugagan?", o:["1941","1945","1950"], a:1},
+  {q:"Buyuk Ipak yo‘li nimaga xizmat qilgan?", o:["Savdo","Urush","Sport"], a:0}
+ ]
+};
 
+let questions = [];
 let correct = 0;
 
-function start(){
+// ===== BOSHLASH =====
+function start(type){
+ questions = [...data[type]]; // nusxa olinadi
+ correct = 0;
+
  document.getElementById("menu").style.display="none";
  document.getElementById("game").style.display="block";
+
  next();
 }
 
+// ===== KEYINGI SAVOL (QAYTMAYDI) =====
 function next(){
- if(questions.length===0){
-  alert("Tugadi! To‘g‘ri: "+correct);
+ if(questions.length === 0){
+  alert("Test tugadi!\nTo‘g‘ri javoblar: " + correct);
+  location.reload();
   return;
  }
 
- let q = questions.shift(); // ← O‘CHIRADI, QAYTMAYDI
- document.getElementById("q").innerText = q.q;
+ const q = questions.shift(); // ← SAVOL O‘CHIRILDI
 
- let box = document.getElementById("o");
+ document.getElementById("q").innerText = q.q;
+ const box = document.getElementById("o");
  box.innerHTML = "";
 
  q.o.forEach((t,i)=>{
-  let b=document.createElement("button");
-  b.innerText=t;
-  b.onclick=()=>{
-    if(i===q.a) correct++;
+  const b = document.createElement("button");
+  b.innerText = t;
+  b.onclick = ()=>{
+    if(i === q.a) correct++;
     next();
   };
   box.appendChild(b);
