@@ -50,9 +50,12 @@ for(let i=1;i<=500;i++){
   else if(op===1){question=`${a}-${b}=?`;correct=a-b;}
   else if(op===2){question=`${a}×${b}=?`;correct=a*b;}
   else{question=`${a*b}÷${a}=?`;correct=b;}
-  let ans=i%3;
+  let ans=i%3; // to'g'ri javob index
   let options=[];
-  for(let j=0;j<3;j++){if(j===ans) options.push(correct); else options.push(correct+Math.floor(Math.random()*5+1)*(j+1));}
+  for(let j=0;j<3;j++){
+    if(j===ans) options.push(correct.toString());
+    else options.push((correct+Math.floor(Math.random()*5+1)*(j+1)).toString());
+  }
   mathQ.push({q:question,o:options,a:ans});
 }
 
@@ -73,8 +76,8 @@ const geoQuestionsList = [
 for(let i=0;i<500;i++){
   let qText = geoQuestionsList[i % geoQuestionsList.length] + ` (#${i+1})`;
   let correctIndex = i%3;
-  let options = ["Javob A","Javob B","Javob C"];
-  options[correctIndex] = "To'g'ri javob";
+  let options = ["Variant A","Variant B","Variant C"];
+  options[correctIndex] = "Variant " + String.fromCharCode(65 + correctIndex); // faqat javob matni, "To'g'ri" yozilmaydi
   geoQ.push({q:qText,o:options,a:correctIndex});
 }
 
