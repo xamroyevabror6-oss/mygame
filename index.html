@@ -5,8 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Test o‘yini</title>
 <style>
-body{font-family:Arial;text-align:center;background:#1e1e1e;color:#fff}
-button{padding:12px;margin:6px;width:90%;max-width:320px}
+body{font-family:Arial;text-align:center;background:#1e1e1e;color:#fff;margin:0;padding:0;}
+h1{margin-top:20px;}
+button{padding:12px;margin:6px;width:90%;max-width:320px;font-size:16px;border:none;border-radius:8px;cursor:pointer;}
+#menu, #game{text-align:center;margin-top:20px;}
+.option{background:#fff;color:#000;}
+#top{display:flex;justify-content:space-between;padding:10px 20px;font-size:16px;background:#333;}
 </style>
 </head>
 <body>
@@ -20,68 +24,120 @@ button{padding:12px;margin:6px;width:90%;max-width:320px}
 </div>
 
 <div id="game" style="display:none">
+<div id="top">
+<span id="count">0/0</span>
+<button onclick="finish()">Tugatish</button>
+</div>
 <h2 id="q"></h2>
 <div id="o"></div>
 </div>
 
 <script>
-const data = {
- math: [
-  {q:"2+3=?",o:["4","5","6"],a:1},
-  {q:"7−2=?",o:["4","5","6"],a:1},
-  {q:"6×3=?",o:["18","16","12"],a:0},
-  {q:"12÷4=?",o:["2","3","4"],a:1},
-  {q:"√36=?",o:["5","6","7"],a:1},
-  {q:"10+15=?",o:["20","25","30"],a:1},
-  {q:"9×4=?",o:["36","32","40"],a:0},
-  {q:"20−8=?",o:["10","12","14"],a:1},
-  {q:"100÷5=?",o:["15","20","25"],a:1},
-  {q:"√49=?",o:["6","7","8"],a:1}
- ],
- history: [
-  {q:"Amir Temur tug‘ilgan yil?",o:["1336","1405","1220"],a:0},
-  {q:"Ikkinchi jahon urushi tugagan yil?",o:["1943","1945","1950"],a:1},
-  {q:"O‘zbekiston mustaqilligi qachon?",o:["1989","1990","1991"],a:2},
-  {q:"Buyuk Ipak yo‘li nimaga xizmat qilgan?",o:["Savdo","Urush","Sport"],a:0},
-  {q:"Birinchi prezident kim?",o:["Karimov","Mirziyoyev","Temur"],a:0},
-  {q:"BMT qachon tuzilgan?",o:["1945","1939","1955"],a:0},
-  {q:"Rim imperiyasi qayerda joylashgan?",o:["Yevropa","Osiyo","Afrika"],a:0},
-  {q:"Qadimgi Misr qayerda?",o:["Nil","Frot","Amudaryo"],a:0}
- ]
-};
+// ===== 1000 TA MATEMATIKA =====
+const mathQ = [];
+for(let i=1;i<=1000;i++){
+  let a = Math.floor(Math.random()*50)+1;
+  let b = Math.floor(Math.random()*50)+1;
+  let opType = i % 4;
+  let question, correct, options, ans;
 
+  if(opType===0){question=`${a}+${b}=?`; correct=a+b;}
+  else if(opType===1){question=`${a}-${b}=?`; correct=a-b;}
+  else if(opType===2){question=`${a}×${b}=?`; correct=a*b;}
+  else{question=`${a*b}÷${a}=?`; correct=b;}
+
+  ans = i%3;
+  options = [];
+  for(let j=0;j<3;j++){
+    if(j===ans) options.push(correct);
+    else options.push(correct+Math.floor(Math.random()*5+1)*(j+1));
+  }
+
+  mathQ.push({q:question,o:options,a:ans});
+}
+
+// ===== 1000 TA TARIX =====
+const historyTemplates = [
+ {q:"Amir Temur tug‘ilgan yil?",ans:1336},
+ {q:"Ikkinchi jahon urushi tugagan yil?",ans:1945},
+ {q:"O‘zbekiston mustaqilligi qachon?",ans:1991},
+ {q:"Buyuk Ipak yo‘li nimaga xizmat qilgan?",ans:"Savdo"},
+ {q:"Birinchi prezident kim?",ans:"Karimov"},
+ {q:"BMT qachon tuzilgan?",ans:1945},
+ {q:"Rim imperiyasi qayerda joylashgan?",ans:"Yevropa"},
+ {q:"Qadimgi Misr qayerda?",ans:"Nil"}
+];
+
+const historyQ = [];
+for(let i=0;i<1000;i++){
+  const t = historyTemplates[i % historyTemplates.length];
+  const correct = t.ans;
+  let ans = i % 3;
+  let opts = [];
+  for(let j=0;j<3;j++){
+    if(j===ans) opts.push(correct);
+    else{
+      if(typeof correct === "number") opts.push(correct+Math.floor(Math.random()*5+1));
+      else opts.push(correct+" "+"X"+j);
+    }
+  }
+  historyQ.push({q:t.q,o:opts,a:ans});
+}
+
+// ===== BUTUN SAVOLLAR =====
+const data = {math: mathQ, history: historyQ};
+
+// ===== O‘ZGARUVCHILAR =====
 let questions = [];
 let correct = 0;
+let totalAnswered = 0;
 
+// ===== BOSHLASH =====
 function start(type){
  questions = [...data[type]];
  correct = 0;
+ totalAnswered = 0;
  document.getElementById("menu").style.display="none";
  document.getElementById("game").style.display="block";
  next();
 }
 
+// ===== KEYINGI SAVOL =====
 function next(){
  if(questions.length===0){
-  alert("Test tugadi!\nTo‘g‘ri javoblar: "+correct);
-  location.reload();
+  finish();
   return;
  }
 
- const q = questions.shift(); // QAYTMAYDI
+ const q = questions.shift(); // QAYTIB CHIQISHI IMKONSIZ
  document.getElementById("q").innerText = q.q;
+ document.getElementById("count").innerText = (totalAnswered+1) + "/" + (totalAnswered + questions.length +1);
+
  const box = document.getElementById("o");
  box.innerHTML="";
 
  q.o.forEach((t,i)=>{
-  const b=document.createElement("button");
-  b.innerText=t;
-  b.onclick=()=>{
+  const b = document.createElement("button");
+  b.className="option";
+  b.innerText = t;
+  b.onclick = ()=>{
     if(i===q.a) correct++;
+    totalAnswered++;
     next();
   };
   box.appendChild(b);
  });
+}
+
+// ===== TUGATISH =====
+function finish(){
+ alert(
+  "Test tugadi!\n" +
+  "To‘g‘ri javoblar: " + correct + "\n" +
+  "Xato javoblar: " + (totalAnswered-correct) + "\n" +
+  "Foiz: " + Math.round(correct*100/totalAnswered) + "%"
+ );
+ location.reload();
 }
 </script>
 
